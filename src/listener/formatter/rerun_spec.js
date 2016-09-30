@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import RerunFormatter from './rerun'
 import Status from '../../status'
 
@@ -23,34 +24,38 @@ describe('RerunFormatter', function() {
     })
   })
 
-  describe('with one passing scenario', function() {
-    beforeEach(function() {
-      const scenarioResult = {status: Status.PASSING}
-      this.rerunFormatter.handleScenarioResult(scenarioResult)
-      this.rerunFormatter.handleAfterFeatures()
-    })
+  _.each([Status.PASSED, Status.SKIPPED], (status) => {
+    describe('with one ' + status + ' scenario', function() {
+      beforeEach(function() {
+        const scenarioResult = {status}
+        this.rerunFormatter.handleScenarioResult(scenarioResult)
+        this.rerunFormatter.handleAfterFeatures()
+      })
 
-    it('outputs nothing', function() {
-      expect(this.output).to.eql('')
+      it('outputs nothing', function() {
+        expect(this.output).to.eql('')
+      })
     })
   })
 
-  describe('with one failing scenario', function() {
-    beforeEach(function() {
-      const scenario = {
-        line: 1,
-        uri: 'path/to/project/features/a.feature'
-      }
-      const scenarioResult = {
-        scenario,
-        status: Status.FAILED
-      }
-      this.rerunFormatter.handleScenarioResult(scenarioResult)
-      this.rerunFormatter.handleAfterFeatures()
-    })
+  _.each([Status.AMBIGUOUS, Status.FAILED, Status.PENDING, Status.UNDEFINED], (status) => {
+    describe('with one ' + status + ' scenario', function() {
+      beforeEach(function() {
+        const scenario = {
+          line: 1,
+          uri: 'path/to/project/features/a.feature'
+        }
+        const scenarioResult = {
+          scenario,
+          status
+        }
+        this.rerunFormatter.handleScenarioResult(scenarioResult)
+        this.rerunFormatter.handleAfterFeatures()
+      })
 
-    it('outputs the reference needed to run the scenario again', function() {
-      expect(this.output).to.eql('features/a.feature:1')
+      it('outputs the reference needed to run the scenario again', function() {
+        expect(this.output).to.eql('features/a.feature:1')
+      })
     })
   })
 

@@ -11,6 +11,11 @@ export default class Feature {
     this.tags = _.map(gherkinData.tags, Tag.build)
     this.uri = uri
 
+    const scenarioLineToDescriptionMapping = _.chain(gherkinData.children)
+      .map((element) => [element.location.line, element.description])
+      .fromPairs()
+      .value()
+
     const stepLineToKeywordMapping = _.chain(gherkinData.children)
       .map('steps')
       .flatten()
@@ -23,6 +28,7 @@ export default class Feature {
         feature: this,
         gherkinData: gherkinPickle,
         language: gherkinData.language,
+        lineToDescriptionMapping: scenarioLineToDescriptionMapping,
         stepLineToKeywordMapping
       })
     })

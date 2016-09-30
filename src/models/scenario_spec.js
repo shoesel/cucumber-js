@@ -6,13 +6,26 @@ describe('Scenario', function () {
     this.gherkinData = {
       locations: [{line: 2, path: '/path/to/feature'}]
     }
+    this.lineToKeywordMapping = {}
     this.stepLineToKeywordMapping = {stepLine: 'data'}
     this.scenarioOptions = {
       feature: this.feature,
       gherkinData: this.gherkinData,
       language: 'en',
+      lineToDescriptionMapping: this.lineToKeywordMapping,
       stepLineToKeywordMapping: this.stepLineToKeywordMapping
     }
+  })
+
+  describe('description', function () {
+    beforeEach(function() {
+      this.lineToKeywordMapping[2] = 'description'
+      this.scenario = new Scenario(this.scenarioOptions)
+    })
+
+    it('returns the description', function () {
+      expect(this.scenario.description).to.eql('description')
+    })
   })
 
   describe('feature', function () {
@@ -20,7 +33,7 @@ describe('Scenario', function () {
       this.scenario = new Scenario(this.scenarioOptions)
     })
 
-    it('returns the scenario', function () {
+    it('returns the feature', function () {
       expect(this.scenario.feature).to.eql({feature: 'data'})
     })
   })
