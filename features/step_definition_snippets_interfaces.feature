@@ -27,7 +27,7 @@ Feature: step definition snippets custom syntax
          Message:
            Undefined. Implement with the following snippet:
 
-             this.Given(/^an undefined step$/, <SNIPPET_FUNCTION_KEYWORD_AND_PARAMETERS> {
+             this.Given("an undefined step", <SNIPPET_FUNCTION_KEYWORD_AND_PARAMETERS> {
                // Write code here that turns the phrase above into concrete actions
                <SNIPPET_IMPLEMENTATION>;
              });

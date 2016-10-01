@@ -21,7 +21,7 @@ export default class Cli {
     return await ConfigurationBuilder.build({argv: fullArgv, cwd: this.cwd})
   }
 
-  async getFormatters({formatOptions, formats}) {
+  async getFormatters({formatOptions, formats, supportCodeLibrary}) {
     const streamsToClose = []
     const formatters = await Promise.map(formats, async ({type, outputTo}) => {
       let stream = this.stdout
@@ -30,7 +30,7 @@ export default class Cli {
         stream = fs.createWriteStream(null, {fd})
         streamsToClose.push(stream)
       }
-      const typeOptions = _.assign({log: ::stream.write}, formatOptions)
+      const typeOptions = _.assign({log: ::stream.write, supportCodeLibrary}, formatOptions)
       return FormatterBuilder.build(type, typeOptions)
     })
     const cleanup = function() {
@@ -47,12 +47,16 @@ export default class Cli {
 
   async run() {
     const configuration = await this.getConfiguration()
+    const supportCodeLibrary = this.getSupportCodeLibrary(configuration.supportCodePaths)
     const [features, {cleanup, formatters}] = await Promise.all([
       getFeatures(configuration.featurePaths),
-      this.getFormatters(configuration)
+      this.getFormatters({
+        formatOptions: configuration.formatOptions,
+        formats: configuration.formats,
+        supportCodeLibrary
+      })
     ])
     const scenarioFilter = new ScenarioFilter(configuration.scenarioFilterOptions)
-    const supportCodeLibrary = this.getSupportCodeLibrary(configuration.supportCodePaths)
     const runtime = new Runtime({
       features,
       listeners: formatters,

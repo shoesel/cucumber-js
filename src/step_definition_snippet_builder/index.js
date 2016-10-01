@@ -2,29 +2,21 @@ import _ from 'lodash'
 import DataTable from '../models/step_arguments/data_table'
 import DocString from '../models/step_arguments/doc_string'
 import KeywordType from '../keyword_type'
-
-const NUMBER_MATCHING_GROUP = '(\\d+)'
-const NUMBER_PATTERN = /\d+/g
-const QUOTED_STRING_MATCHING_GROUP = '"([^"]*)"'
-const QUOTED_STRING_PATTERN = /"[^"]*"/g
+import {CucumberExpressionGenerator} from 'cucumber-expressions'
 
 export default class StepDefinitionSnippetBuilder {
-  constructor(snippetSyntax) {
+  constructor({snippetSyntax, transformLookup}) {
     this.snippetSyntax = snippetSyntax
+    this.cucumberExpressionGenerator = new CucumberExpressionGenerator(transformLookup)
   }
 
   build(step) {
     const functionName = this.getFunctionName(step)
-    const pattern = this.getPattern(step)
-    const parameters = this.getParameters(step, pattern)
+    const generatedExpression = this.cucumberExpressionGenerator.generateExpression(step.name, true)
+    const pattern = JSON.stringify(generatedExpression.source)
+    const parameters = this.getParameters(step, generatedExpression.transforms)
     const comment = 'Write code here that turns the phrase above into concrete actions'
     return this.snippetSyntax.build(functionName, pattern, parameters, comment)
-  }
-
-  countPatternMatchingGroups(pattern) {
-    const numberMatchingGroupCount = pattern.split(NUMBER_MATCHING_GROUP).length - 1
-    const quotedStringMatchingGroupCount = pattern.split(QUOTED_STRING_MATCHING_GROUP).length - 1
-    return numberMatchingGroupCount + quotedStringMatchingGroupCount
   }
 
   getFunctionName(step) {
@@ -35,25 +27,16 @@ export default class StepDefinitionSnippetBuilder {
     }
   }
 
-  getParameters(step) {
+  getParameters(step, expressionTranforms) {
     return _.concat(
-      this.getPatternMatchingGroupParameters(step),
+      this.getPatternMatchingGroupParameters(expressionTranforms),
       this.getStepArgumentParameters(step),
       'callback'
     )
   }
 
-  getPattern(step) {
-    const escapedStepName = step.name.replace(/[-[\]{}()*+?.\\^$|#\n\/]/g, '\\$&')
-    const parameterizedStepName = escapedStepName
-      .replace(NUMBER_PATTERN, NUMBER_MATCHING_GROUP)
-      .replace(QUOTED_STRING_PATTERN, QUOTED_STRING_MATCHING_GROUP)
-    return `/^${parameterizedStepName}$/`
-  }
-
-  getPatternMatchingGroupParameters(step) {
-    const pattern = this.getPattern(step)
-    return _.times(this.countPatternMatchingGroups(pattern), function (n) {
+  getPatternMatchingGroupParameters(expressionTranforms) {
+    return _.times(expressionTranforms.length, function (n) {
       return `arg${n + 1}`
     })
   }

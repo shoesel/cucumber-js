@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import AttachmentManager from '../attachment_manager'
 import DataTable from './step_arguments/data_table'
 import DocString from './step_arguments/doc_string'
@@ -5,17 +6,9 @@ import Status from '../status'
 import StepResult from './step_result'
 import Time from '../time'
 import UserCodeRunner from '../user_code_runner'
+import {CucumberExpression, RegularExpression} from 'cucumber-expressions'
 
 const {beginTiming, endTiming} = Time
-
-const DOLLAR_PARAMETER_REGEXP = /\$[a-zA-Z_-]+/g
-const DOLLAR_PARAMETER_SUBSTITUTION = '(.*)'
-const QUOTED_DOLLAR_PARAMETER_REGEXP = /"\$[a-zA-Z_-]+"/g
-const QUOTED_DOLLAR_PARAMETER_SUBSTITUTION = '"([^"]*)"'
-const STRING_PATTERN_REGEXP_PREFIX = '^'
-const STRING_PATTERN_REGEXP_SUFFIX = '$'
-const UNSAFE_STRING_CHARACTERS_REGEXP = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\|]/g
-const UNSAFE_STRING_CHARACTERS_SUBSTITUTION = '\\$&'
 
 export default class StepDefinition {
   constructor({code, line, options, pattern, uri}) {
@@ -36,12 +29,10 @@ export default class StepDefinition {
     return this.buildInvalidCodeLengthMessage(parameters.length, parameters.length + 1)
   }
 
-  getInvocationParameters(step) {
-    const stepName = step.name
-    const patternRegexp = this.getPatternRegexp()
-    let parameters = patternRegexp.exec(stepName)
-    parameters.shift()
-    parameters = parameters.concat(step.arguments.map(function(arg) {
+  getInvocationParameters({step, transformLookup}) {
+    const cucumberExpression = this.getCucumberExpression(transformLookup)
+    const stepNameParameters = _.map(cucumberExpression.match(step.name), 'transformedValue')
+    const stepArgumentParameters = step.arguments.map(function(arg) {
       if (arg instanceof DataTable) {
         return arg
       } else if (arg instanceof DocString) {
@@ -49,21 +40,15 @@ export default class StepDefinition {
       } else {
         throw new Error('Unknown argument type:' + arg)
       }
-    }))
-    return parameters
+    })
+    return stepNameParameters.concat(stepArgumentParameters)
   }
 
-  getPatternRegexp () {
+  getCucumberExpression (transformLookup) {
     if (typeof(this.pattern) === 'string') {
-      let regexpString = this.pattern
-        .replace(UNSAFE_STRING_CHARACTERS_REGEXP, UNSAFE_STRING_CHARACTERS_SUBSTITUTION)
-        .replace(QUOTED_DOLLAR_PARAMETER_REGEXP, QUOTED_DOLLAR_PARAMETER_SUBSTITUTION)
-        .replace(DOLLAR_PARAMETER_REGEXP, DOLLAR_PARAMETER_SUBSTITUTION)
-      regexpString = STRING_PATTERN_REGEXP_PREFIX + regexpString + STRING_PATTERN_REGEXP_SUFFIX
-      return new RegExp(regexpString)
-    }
-    else {
-      return this.pattern
+      return new CucumberExpression(this.pattern, [], transformLookup)
+    } else {
+      return new RegularExpression(this.pattern, [], transformLookup)
     }
   }
 
@@ -71,9 +56,9 @@ export default class StepDefinition {
     return [parameters.length, parameters.length + 1]
   }
 
-  async invoke({defaultTimeout, scenarioResult, step, world}) {
+  async invoke({defaultTimeout, scenarioResult, step, transformLookup, world}) {
     beginTiming()
-    const parameters = this.getInvocationParameters(step, scenarioResult)
+    const parameters = this.getInvocationParameters({scenarioResult, step, transformLookup})
     const timeoutInMilliseconds = this.options.timeout || defaultTimeout
     const attachmentManager = new AttachmentManager()
     world.attach = ::attachmentManager.create
@@ -112,8 +97,8 @@ export default class StepDefinition {
     return new StepResult(stepResultData)
   }
 
-  matchesStepName(stepName) {
-    const regexp = this.getPatternRegexp()
-    return regexp.test(stepName)
+  matchesStepName({stepName, transformLookup}) {
+    const cucumberExpression = this.getCucumberExpression(transformLookup)
+    return Boolean(cucumberExpression.match(stepName))
   }
 }

@@ -15,7 +15,7 @@ export default class HookDefinition extends StepDefinition {
     return this.buildInvalidCodeLengthMessage('0 or 1', '2')
   }
 
-  getInvocationParameters(step, scenarioResult) {
+  getInvocationParameters({scenarioResult}) {
     return [scenarioResult]
   }
 

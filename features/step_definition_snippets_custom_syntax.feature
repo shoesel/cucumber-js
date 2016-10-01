@@ -53,7 +53,7 @@ Feature: step definition snippets custom syntax
          Message:
            Undefined. Implement with the following snippet:
 
-             @Given /^an undefined step$/, <SNIPPET_PARAMETERS_AND_ARROW>
+             @Given "an undefined step", <SNIPPET_PARAMETERS_AND_ARROW>
                # Write code here that turns the phrase above into concrete actions
                <SNIPPET_IMPLEMENTATION>
 

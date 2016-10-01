@@ -12,6 +12,7 @@ describe('FeaturesRunner', function () {
     this.features = []
     this.supportCodeLibrary = createMock({
       getDefaultTimeout: 5000,
+      getTransformLookup: {},
       listeners: [],
       instantiateNewWorld: {}
     })

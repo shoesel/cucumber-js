@@ -18,6 +18,7 @@ describe('ScenarioRunner', function () {
       getBeforeHookDefinitions: [],
       getDefaultTimeout: 5000,
       getStepDefinitions: [],
+      getTransformLookup: {},
       instantiateNewWorld: {}
     })
     this.options = {}

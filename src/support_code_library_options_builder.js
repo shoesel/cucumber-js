@@ -3,6 +3,7 @@ import HookDefinition from './models/hook_definition'
 import Listener from './listener'
 import StackTrace from 'stacktrace-js'
 import StepDefinition from './models/step_definition'
+import {Transform, TransformLookup} from 'cucumber-expressions'
 
 function build({cwd, fns}) {
   const options = {
@@ -10,9 +11,13 @@ function build({cwd, fns}) {
     beforeHookDefinitions: [],
     defaultTimeout: 5000,
     listeners: [],
-    stepDefinitions: []
+    stepDefinitions: [],
+    transformLookup: new TransformLookup()
   }
   const fnContext = {
+    addTransform(...tranformArgs) {
+      options.transformLookup.addTransform(new Transform(...tranformArgs))
+    },
     After: defineHook(options.afterHookDefinitions),
     Before: defineHook(options.beforeHookDefinitions),
     defineStep: defineStep(options.stepDefinitions),
@@ -28,6 +33,7 @@ function build({cwd, fns}) {
     }
   }
   fnContext.Given = fnContext.When = fnContext.Then = fnContext.defineStep
+  fnContext.addTransform('stringInDoubleQuotes', String, '"[^"]*"', JSON.parse)
   fns.forEach((fn) => fn.call(fnContext))
   options.World = fnContext.World
   return options

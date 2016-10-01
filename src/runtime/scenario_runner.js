@@ -15,6 +15,7 @@ export default class ScenarioRunner {
 
     this.defaultTimeout = supportCodeLibrary.getDefaultTimeout()
     this.scenarioResult = new ScenarioResult(scenario)
+    this.transformLookup = supportCodeLibrary.getTransformLookup()
     this.world = supportCodeLibrary.instantiateNewWorld(options.worldParameters)
   }
 
@@ -45,6 +46,7 @@ export default class ScenarioRunner {
         defaultTimeout: this.defaultTimeout,
         scenarioResult: this.scenarioResult,
         step: hook,
+        transformLookup: this.transformLookup,
         world: this.world
       })
     }
@@ -74,6 +76,7 @@ export default class ScenarioRunner {
         defaultTimeout: this.defaultTimeout,
         scenarioResult: this.scenarioResult,
         step,
+        transformLookup: this.transformLookup,
         world: this.world
       })
     }

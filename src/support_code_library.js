@@ -8,6 +8,7 @@ export default class SupportCodeLibrary {
       'defaultTimeout',
       'listeners',
       'stepDefinitions',
+      'transformLookup',
       'World'
     ]))
   }
@@ -18,6 +19,10 @@ export default class SupportCodeLibrary {
 
   getListeners() {
     return this.listeners
+  }
+
+  getTransformLookup() {
+    return this.transformLookup
   }
 
   getAfterHookDefinitions(scenario) {
@@ -34,9 +39,9 @@ export default class SupportCodeLibrary {
     })
   }
 
-  getStepDefinitions(name) {
+  getStepDefinitions(stepName) {
     return this.stepDefinitions.filter((stepDefinition) => {
-      return stepDefinition.matchesStepName(name)
+      return stepDefinition.matchesStepName({stepName, transformLookup: this.transformLookup})
     })
   }
 

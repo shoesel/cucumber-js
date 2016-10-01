@@ -2,10 +2,11 @@ import UserCodeRunner from '../user_code_runner'
 import path from 'path'
 
 export default class Listener {
-  constructor({cwd, line, timeout, uri}) {
+  constructor({cwd, line, supportCodeLibrary, timeout, uri}) {
     this.cwd = cwd
     this.line = line
     this.timeout = timeout
+    this.supportCodeLibrary = supportCodeLibrary
     this.uri = uri
   }
 

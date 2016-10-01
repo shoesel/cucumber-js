@@ -32,7 +32,7 @@ export default class FormatterBuilder {
     }
   }
 
-  static getStepDefinitionSnippetBuilder({cwd, snippetInterface, snippetSyntax}) {
+  static getStepDefinitionSnippetBuilder({cwd, snippetInterface, snippetSyntax, supportCodeLibrary}) {
     if (!snippetInterface) {
       snippetInterface = 'callback'
     }
@@ -41,7 +41,9 @@ export default class FormatterBuilder {
       const fullSyntaxPath = path.resolve(cwd, snippetSyntax)
       Syntax = require(fullSyntaxPath)
     }
-    const syntax = new Syntax(snippetInterface)
-    return new StepDefinitionSnippetBuilder(syntax)
+    return new StepDefinitionSnippetBuilder({
+      snippetSyntax: new Syntax(snippetInterface),
+      transformLookup: supportCodeLibrary.getTransformLookup()
+    })
   }
 }
