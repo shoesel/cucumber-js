@@ -13,7 +13,7 @@ export default class StepDefinitionSnippetBuilder {
   build(step) {
     const functionName = this.getFunctionName(step)
     const generatedExpression = this.cucumberExpressionGenerator.generateExpression(step.name, true)
-    const pattern = JSON.stringify(generatedExpression.source)
+    const pattern = generatedExpression.source
     const parameters = this.getParameters(step, generatedExpression.transforms)
     const comment = 'Write code here that turns the phrase above into concrete actions'
     return this.snippetSyntax.build(functionName, pattern, parameters, comment)

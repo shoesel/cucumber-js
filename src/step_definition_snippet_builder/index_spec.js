@@ -2,11 +2,16 @@ import KeywordType from '../keyword_type'
 import StepDefinitionSnippetBuilder from './'
 import DataTable from '../models/step_arguments/data_table'
 import DocString from '../models/step_arguments/doc_string'
+import TransformLookupBuilder from '../transform_lookup_builder'
 
 describe('StepDefinitionSnippetBuilder', function () {
   beforeEach(function () {
     this.snippetSyntax = createMock(['build'])
-    this.snippetBuilder = new StepDefinitionSnippetBuilder(this.snippetSyntax)
+    this.transformsLookup = TransformLookupBuilder.build()
+    this.snippetBuilder = new StepDefinitionSnippetBuilder({
+      snippetSyntax: this.snippetSyntax,
+      transformLookup: this.transformsLookup
+    })
   })
 
   describe('build()', function () {
@@ -57,8 +62,8 @@ describe('StepDefinitionSnippetBuilder', function () {
         this.result = this.snippetBuilder.build(this.step)
       })
 
-      it('wraps the string in a full regex', function() {
-        expect(this.snippetSyntax.build.firstCall.args[1]).to.eql('/^abc$/')
+      it('returns the cucumber expression', function() {
+        expect(this.snippetSyntax.build.firstCall.args[1]).to.eql('abc')
       })
     })
 
@@ -69,7 +74,7 @@ describe('StepDefinitionSnippetBuilder', function () {
       })
 
       it('replaces the quoted string with a capture group and adds a parameter', function() {
-        expect(this.snippetSyntax.build.firstCall.args[1]).to.eql('/^abc "([^"]*)" ghi$/')
+        expect(this.snippetSyntax.build.firstCall.args[1]).to.eql('abc {arg1:stringInDoubleQuotes} ghi')
         expect(this.snippetSyntax.build.firstCall.args[2]).to.eql(['arg1', 'callback'])
       })
     })
@@ -81,7 +86,7 @@ describe('StepDefinitionSnippetBuilder', function () {
       })
 
       it('replaces the quoted strings with capture groups and adds parameters', function() {
-        expect(this.snippetSyntax.build.firstCall.args[1]).to.eql('/^abc "([^"]*)" ghi "([^"]*)" mno$/')
+        expect(this.snippetSyntax.build.firstCall.args[1]).to.eql('abc {arg1:stringInDoubleQuotes} ghi {arg2:stringInDoubleQuotes} mno')
         expect(this.snippetSyntax.build.firstCall.args[2]).to.eql(['arg1', 'arg2', 'callback'])
       })
     })
@@ -93,7 +98,7 @@ describe('StepDefinitionSnippetBuilder', function () {
       })
 
       it('replaces the number with a capture group and adds a parameter', function() {
-        expect(this.snippetSyntax.build.firstCall.args[1]).to.eql('/^abc (\\d+) def$/')
+        expect(this.snippetSyntax.build.firstCall.args[1]).to.eql('abc {arg1:int} def')
         expect(this.snippetSyntax.build.firstCall.args[2]).to.eql(['arg1', 'callback'])
       })
     })

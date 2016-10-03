@@ -26,7 +26,7 @@ Feature: step definition snippets custom syntax
             var callbackName = parameters[parameters.length - 1];
             var parametersStr = parameters.length > 0 ? '(' + parameters.join(', ') + ') ' : '';
             var snippet =
-              '@' + functionName + ' ' + pattern + ', ' + parametersStr + '-> ' + '\n' +
+              '@' + functionName + ' \'' + pattern.replace(/'/g, '\\\'') + '\', ' + parametersStr + '-> ' + '\n' +
               '  # ' + comment + '\n' +
               '  ' + implementation;
             return snippet;
@@ -53,7 +53,7 @@ Feature: step definition snippets custom syntax
          Message:
            Undefined. Implement with the following snippet:
 
-             @Given "an undefined step", <SNIPPET_PARAMETERS_AND_ARROW>
+             @Given 'an undefined step', <SNIPPET_PARAMETERS_AND_ARROW>
                # Write code here that turns the phrase above into concrete actions
                <SNIPPET_IMPLEMENTATION>
 

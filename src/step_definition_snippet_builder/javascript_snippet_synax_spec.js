@@ -8,9 +8,9 @@ describe('JavascriptSnippetSyntax', function () {
       })
 
       it('returns the proper snippet', function () {
-        var actual = this.syntax.build('functionName', '/^pattern$/', ['arg1', 'arg2', 'callback'], 'comment')
+        var actual = this.syntax.build('functionName', 'pattern', ['arg1', 'arg2', 'callback'], 'comment')
         var expected =
-          'this.functionName(/^pattern$/, function (arg1, arg2, callback) {' + '\n' +
+          'this.functionName(\'pattern\', function (arg1, arg2, callback) {' + '\n' +
           '  // comment' + '\n' +
           '  callback(null, \'pending\');' + '\n' +
           '});'
@@ -24,9 +24,9 @@ describe('JavascriptSnippetSyntax', function () {
       })
 
       it('returns the proper snippet', function () {
-        var actual = this.syntax.build('functionName', '/^pattern$/', ['arg1', 'arg2', 'callback'], 'comment')
+        var actual = this.syntax.build('functionName', 'pattern', ['arg1', 'arg2', 'callback'], 'comment')
         var expected =
-          'this.functionName(/^pattern$/, function *(arg1, arg2) {' + '\n' +
+          'this.functionName(\'pattern\', function *(arg1, arg2) {' + '\n' +
           '  // comment' + '\n' +
           '  return \'pending\';' + '\n' +
           '});'
@@ -40,9 +40,9 @@ describe('JavascriptSnippetSyntax', function () {
       })
 
       it('returns the proper snippet', function () {
-        var actual = this.syntax.build('functionName', '/^pattern$/', ['arg1', 'arg2', 'callback'], 'comment')
+        var actual = this.syntax.build('functionName', 'pattern', ['arg1', 'arg2', 'callback'], 'comment')
         var expected =
-          'this.functionName(/^pattern$/, function (arg1, arg2) {' + '\n' +
+          'this.functionName(\'pattern\', function (arg1, arg2) {' + '\n' +
           '  // comment' + '\n' +
           '  return \'pending\';' + '\n' +
           '});'
@@ -56,9 +56,25 @@ describe('JavascriptSnippetSyntax', function () {
       })
 
       it('returns the proper snippet', function () {
-        var actual = this.syntax.build('functionName', '/^pattern$/', ['arg1', 'arg2', 'callback'], 'comment')
+        var actual = this.syntax.build('functionName', 'pattern', ['arg1', 'arg2', 'callback'], 'comment')
         var expected =
-          'this.functionName(/^pattern$/, function (arg1, arg2) {' + '\n' +
+          'this.functionName(\'pattern\', function (arg1, arg2) {' + '\n' +
+          '  // comment' + '\n' +
+          '  return \'pending\';' + '\n' +
+          '});'
+        expect(actual).to.eql(expected)
+      })
+    })
+
+    describe('pattern contains single quote', function () {
+      beforeEach(function() {
+        this.syntax = new JavascriptSnippetSyntax('synchronous')
+      })
+
+      it('returns the proper snippet', function () {
+        var actual = this.syntax.build('functionName', 'pattern\'', ['arg1', 'arg2', 'callback'], 'comment')
+        var expected =
+          'this.functionName(\'pattern\\\'\', function (arg1, arg2) {' + '\n' +
           '  // comment' + '\n' +
           '  return \'pending\';' + '\n' +
           '});'

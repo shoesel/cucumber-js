@@ -10,7 +10,7 @@ Feature: step definition snippets
     When I run cucumber-js
     Then it suggests a "Given" step definition snippet with 1 parameter for:
       """
-      "a step numbered {arg1:int}"
+      'a step numbered {arg1:int}'
       """
 
   Scenario: quoted strings
@@ -23,7 +23,7 @@ Feature: step definition snippets
     When I run cucumber-js
     Then it suggests a "Given" step definition snippet with 1 parameter for:
       """
-      "a step with {arg1:stringInDoubleQuotes}"
+      'a step with {arg1:stringInDoubleQuotes}'
       """
 
   Scenario: multiple quoted strings
@@ -36,7 +36,7 @@ Feature: step definition snippets
     When I run cucumber-js
     Then it suggests a "Given" step definition snippet with 2 parameters for:
       """
-      "a step with {arg1:stringInDoubleQuotes} and {arg2:stringInDoubleQuotes}"
+      'a step with {arg1:stringInDoubleQuotes} and {arg2:stringInDoubleQuotes}'
       """
 
   Scenario: background step
@@ -51,5 +51,5 @@ Feature: step definition snippets
     When I run cucumber-js
     Then it suggests a "Given" step definition snippet with 1 parameter for:
       """
-      "a step with {arg1:stringInDoubleQuotes}"
+      'a step with {arg1:stringInDoubleQuotes}'
       """
