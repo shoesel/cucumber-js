@@ -4,7 +4,7 @@ function build() {
   const transformLookup = new TransformLookup()
   const stringInDoubleQuotesTransform = new Transform(
     'stringInDoubleQuotes',
-    String,
+    function() {},
     '"[^"]*"',
     JSON.parse
   )

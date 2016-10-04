@@ -16,8 +16,14 @@ function build({cwd, fns}) {
     transformLookup: TransformLookupBuilder.build()
   }
   const fnContext = {
-    addTransform(...tranformArgs) {
-      options.transformLookup.addTransform(new Transform(...tranformArgs))
+    addTransform({captureGroupRegexps, transformer, typeName}) {
+      const transform = new Transform(
+        typeName,
+        function() {},
+        captureGroupRegexps,
+        transformer
+      )
+      options.transformLookup.addTransform(transform)
     },
     After: defineHook(options.afterHookDefinitions),
     Before: defineHook(options.beforeHookDefinitions),

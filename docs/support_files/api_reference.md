@@ -7,6 +7,40 @@ called with a context that exposes the following methods:
 
 ---
 
+#### this.addTransform({captureGroupRegexps, name, transformer})
+
+Add a new transform to convert a capture group into something else.
+
+* `captureGroupRegexps` - array of regular expressions to apply the transformer to
+* `transformer` - function which transforms the captured group from a string into what is passed to the step definition
+* `typeName` - string used to refer to this type in cucumber expressions
+
+The built in transforms are:
+```js
+// Float
+{
+  captureGroupRegexps: ['-?\\d*\\.?\\d+'],
+  transformer: parseInt,
+  typeName: 'int'
+}
+
+// Int
+{
+  captureGroupRegexps: ['-?\\d+'],
+  transformer: parseFloat,
+  typeName: 'float'
+}
+
+// String in double quotes
+{
+  captureGroupRegexps: ['"[^"]*"'],
+  transformer: JSON.parse,
+  typeName: 'stringInDoubleQuotes'
+}
+```
+
+---
+
 #### this.After([options,] code)
 
 Defines a hook which is run after each scenario.

@@ -54,7 +54,7 @@
         this.Before({tags: "@foo and @bar"}, function (scenario) {})
         this.Before({tags: "@foo or @bar"}, function (scenario) {})
         ```
-  * Step Definitions (TODO)
+  * Step Definitions
     * String patterns were removed in favor [cucumber-expressions](https://docs.cucumber.io/cucumber-expressions/)
     * Regular Expressions
       * capture groups matching `(\d+)` and `(-\d+)` will be automatically converted to an integer using `parseInt`
@@ -69,7 +69,7 @@
 * Support Files
   * Attachments:
     * When attaching a stream, the interface can either accept a callback as a third argument or will return a promise.
-  * Step Definitions (TODO)
+  * Step Definitions
     * Ability to add custom argument transformations
 
 ### [1.3.1](https://github.com/cucumber/cucumber-js/compare/v1.3.0...v1.3.1) (2016-09-30)
