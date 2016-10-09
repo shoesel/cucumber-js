@@ -179,7 +179,7 @@
   "license": "MIT",
   "files": [
     "bin/",
-    "lib/",
-    "release/"
+    "dist/",
+    "lib/"
   ]
 }
