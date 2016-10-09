@@ -134,7 +134,7 @@
 #### New Features
 
 * Add full support to `registerHandler` (Charlie Rudolph)
-  * Can now use all supported functions interfaces (synchronous, callback and promise, generators)
+  * Can now use all supported functions interfaces (synchronous, callback, promise, generators)
   * Will throw any error received and immediately kill the test suite
   * Supports handler specific timeouts
   * Updated documentation
