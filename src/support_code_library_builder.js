@@ -118,7 +118,7 @@ function wrapGeneratorFunctions({cwd, definitions, generatorFunctionWrapper}) {
 
         ${references}
 
-      Use 'this.setGeneratorFunctionWrapper(wrapper)' to configure how to wrap them.
+      Use 'this.setGeneratorFunctionWrapper(fn)' to configure how to wrap them.
       `
     throw new Error(message)
   }

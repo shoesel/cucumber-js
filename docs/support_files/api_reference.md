@@ -99,7 +99,7 @@ Set the default timeout for asynchronous steps. Default is `5000` milliseconds.
 
 ---
 
-#### this.setGeneratorFunctionWrapper(wrapFn)
+#### this.setGeneratorFunctionWrapper(fn)
 
 Set the function used to wrap generator functions. An example wrapper is [Bluebird](https://github.com/petkaantonov/bluebird/)'s `Promise.coroutine`
 

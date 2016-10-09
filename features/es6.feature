@@ -41,7 +41,7 @@ Feature: ES6 compatibility
 
         features/step_definitions/cucumber_steps.js:8
 
-      Use 'this.setGeneratorFunctionWrapper(wrapper)' to configure how to wrap them.
+      Use 'this.setGeneratorFunctionWrapper(fn)' to configure how to wrap them.
       """
 
   Scenario: with generator function wrapper
