@@ -1,6 +1,3 @@
-import _ from 'lodash'
-import co from 'co'
-import isGenerator from 'is-generator'
 import Promise from 'bluebird'
 import UncaughtExceptionManager from './uncaught_exception_manager'
 import util from 'util'
@@ -25,28 +22,18 @@ export default class UserCodeRunner {
       return {error}
     }
 
-    const callbackInterface = fn.length === argsArray.length
-    const generatorInterface = isGenerator(fnReturn)
-    const promiseInterface = fnReturn && typeof fnReturn.then === 'function'
-    const asyncInterfacesUsed = _({
-      callback: callbackInterface,
-      generator: generatorInterface,
-      promise: promiseInterface
-    }).pickBy().keys().value()
-
-    if (asyncInterfacesUsed.length === 0) {
-      return {result: fnReturn}
-    } else if (asyncInterfacesUsed.length > 1) {
-      return {error: 'function uses multiple asynchronous interfaces: ' + asyncInterfacesUsed.join(', ')}
-    }
-
     const racingPromises = []
-    if (callbackInterface) {
+    const callbackInterface = fn.length === argsArray.length
+    const promiseInterface = fnReturn && typeof fnReturn.then === 'function'
+
+    if (callbackInterface && promiseInterface) {
+      return {error: 'function uses multiple asynchronous interfaces: callback and promise'}
+    } else if (callbackInterface) {
       racingPromises.push(callbackDeferred.promise)
-    } else if (generatorInterface) {
-      racingPromises.push(co(fnReturn))
     } else if (promiseInterface) {
       racingPromises.push(fnReturn)
+    } else {
+      return {result: fnReturn}
     }
 
     const uncaughtExceptionDeferred = Promise.defer()

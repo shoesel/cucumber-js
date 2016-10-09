@@ -57,8 +57,9 @@
   * Step Definitions
     * String patterns were removed in favor [cucumber-expressions](https://docs.cucumber.io/cucumber-expressions/)
     * Regular Expressions
-      * capture groups matching `(\d+)` and `(-\d+)` will be automatically converted to an integer using `parseInt`
+      * capture groups matching `(-?\d+)` will be automatically converted to an integer using `parseInt`
       * capture groups matching `(-?\d*\.?\d+)` will be automatically converted to a float using `parseFloat`
+    * Generator functions are no longer automatically run with `co`. To retain the previous functionality, install `co` and add `this.setGeneratorFunctionWrapper(co.wrap)`.
   * Event Handlers
     * Objects no longer have `get*` methods and instead have exposed properties
       * For example: `scenario.getName()` is now just `scenario.name`
@@ -133,7 +134,7 @@
 #### New Features
 
 * Add full support to `registerHandler` (Charlie Rudolph)
-  * Can now use all supported functions interfaces (synchronous, callback, promise, generators)
+  * Can now use all supported functions interfaces (synchronous, callback and promise, generators)
   * Will throw any error received and immediately kill the test suite
   * Supports handler specific timeouts
   * Updated documentation

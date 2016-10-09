@@ -135,7 +135,7 @@ Feature: After hook interface
     And the exit status should be 1
     And the output contains the text:
       """
-      function uses multiple asynchronous interfaces: callback, promise
+      function uses multiple asynchronous interfaces: callback and promise
       """
 
   Scenario: promise resolves

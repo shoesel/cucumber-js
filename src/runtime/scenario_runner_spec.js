@@ -13,14 +13,14 @@ describe('ScenarioRunner', function () {
       getFeature: null,
       getSteps: []
     })
-    this.supportCodeLibrary = createMock({
-      getAfterHookDefinitions: [],
-      getBeforeHookDefinitions: [],
-      getDefaultTimeout: 5000,
-      getStepDefinitions: [],
-      getTransformLookup: {},
-      instantiateNewWorld: {}
-    })
+    this.supportCodeLibrary = {
+      afterHookDefinitions: [],
+      beforeHookDefinitions: [],
+      defaultTimeout: 5000,
+      stepDefinitions: [],
+      transformLookup: {},
+      World() {}
+    }
     this.options = {}
     this.scenarioRunner = new ScenarioRunner({
       eventBroadcaster: this.eventBroadcaster,
@@ -33,8 +33,6 @@ describe('ScenarioRunner', function () {
   describe('run()', function () {
     describe('with no steps or hooks', function() {
       beforeEach(async function() {
-        this.supportCodeLibrary.getAfterHookDefinitions.returns([])
-        this.supportCodeLibrary.getBeforeHookDefinitions.returns([])
         this.scenario.steps = []
         this.scenarioResult = await this.scenarioRunner.run()
       })
@@ -61,9 +59,10 @@ describe('ScenarioRunner', function () {
           step: this.step
         }
         const stepDefinition = createMock({
-          invoke: Promise.resolve(this.stepResult)
+          invoke: Promise.resolve(this.stepResult),
+          matchesStepName: true
         })
-        this.supportCodeLibrary.getStepDefinitions.returns([stepDefinition])
+        this.supportCodeLibrary.stepDefinitions = [stepDefinition]
         this.scenario.steps = [this.step]
         this.scenarioResult = await this.scenarioRunner.run()
       })
@@ -93,9 +92,10 @@ describe('ScenarioRunner', function () {
           step: this.step
         }
         const stepDefinition = createMock({
-          invoke: Promise.resolve(this.stepResult)
+          invoke: Promise.resolve(this.stepResult),
+          matchesStepName: true
         })
-        this.supportCodeLibrary.getStepDefinitions.returns([stepDefinition])
+        this.supportCodeLibrary.stepDefinitions = [stepDefinition]
         this.scenario.steps = [this.step]
         this.scenarioResult = await this.scenarioRunner.run()
       })
@@ -119,7 +119,8 @@ describe('ScenarioRunner', function () {
     describe('with an ambiguous step', function() {
       beforeEach(async function() {
         this.step = {}
-        this.supportCodeLibrary.getStepDefinitions.returns([{}, {}])
+        const stepDefinition = createMock({matchesStepName: true})
+        this.supportCodeLibrary.stepDefinitions = [stepDefinition, stepDefinition]
         this.scenario.steps = [this.step]
         this.scenarioResult = await this.scenarioRunner.run()
       })
@@ -171,7 +172,8 @@ describe('ScenarioRunner', function () {
       beforeEach(async function() {
         this.options.dryRun = true
         this.step = {}
-        this.supportCodeLibrary.getStepDefinitions.returns([{}])
+        const stepDefinition = createMock({matchesStepName: true})
+        this.supportCodeLibrary.stepDefinitions = [stepDefinition]
         this.scenario.steps = [this.step]
         this.scenarioResult = await this.scenarioRunner.run()
       })
@@ -197,14 +199,14 @@ describe('ScenarioRunner', function () {
     describe('with an before hook and step in dry run mode', function() {
       beforeEach(async function() {
         this.options.dryRun = true
-        this.hookDefinition = new HookDefinition({
+        const hookDefinition = new HookDefinition({
           code() { throw new Error('error') },
           options: {}
         })
         this.step = {}
-        this.stepDefinition = {}
-        this.supportCodeLibrary.getBeforeHookDefinitions.returns([this.hookDefinition])
-        this.supportCodeLibrary.getStepDefinitions.returns([{}])
+        const stepDefinition = createMock({matchesStepName: true})
+        this.supportCodeLibrary.beforeHookDefinitions = [hookDefinition]
+        this.supportCodeLibrary.stepDefinitions = [stepDefinition]
         this.scenario.steps = [this.step]
         this.scenarioResult = await this.scenarioRunner.run()
       })
@@ -239,14 +241,14 @@ describe('ScenarioRunner', function () {
     describe('with an after hook and step in dry run mode', function() {
       beforeEach(async function() {
         this.options.dryRun = true
-        this.hookDefinition = new HookDefinition({
+        const hookDefinition = new HookDefinition({
           code() { throw new Error('error') },
           options: {}
         })
         this.step = {}
-        this.stepDefinition = {}
-        this.supportCodeLibrary.getAfterHookDefinitions.returns([this.hookDefinition])
-        this.supportCodeLibrary.getStepDefinitions.returns([{}])
+        const stepDefinition = createMock({matchesStepName: true})
+        this.supportCodeLibrary.afterHookDefinitions = [hookDefinition]
+        this.supportCodeLibrary.stepDefinitions = [stepDefinition]
         this.scenario.steps = [this.step]
         this.scenarioResult = await this.scenarioRunner.run()
       })

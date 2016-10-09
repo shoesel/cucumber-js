@@ -10,12 +10,12 @@ describe('FeaturesRunner', function () {
     this.listener = createMock(['hear'])
     this.eventBroadcaster = new EventBroadcaster({listeners: [this.listener]})
     this.features = []
-    this.supportCodeLibrary = createMock({
-      getDefaultTimeout: 5000,
-      getTransformLookup: {},
+    this.supportCodeLibrary = {
+      defaultTimeout: 5000,
+      transformLookuo: {},
       listeners: [],
-      instantiateNewWorld: {}
-    })
+      World() {}
+    }
     this.scenarioFilter = createMock({matches: true})
     this.listeners = []
     this.options = {}

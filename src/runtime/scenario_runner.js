@@ -12,11 +12,8 @@ export default class ScenarioRunner {
     this.options = options
     this.scenario = scenario
     this.supportCodeLibrary = supportCodeLibrary
-
-    this.defaultTimeout = supportCodeLibrary.getDefaultTimeout()
     this.scenarioResult = new ScenarioResult(scenario)
-    this.transformLookup = supportCodeLibrary.getTransformLookup()
-    this.world = supportCodeLibrary.instantiateNewWorld(options.worldParameters)
+    this.world = new supportCodeLibrary.World(options.worldParameters)
   }
 
   async broadcastScenarioResult() {
@@ -28,6 +25,16 @@ export default class ScenarioRunner {
     this.scenarioResult.witnessStepResult(stepResult)
     const event = new Event({data: stepResult, name: Event.STEP_RESULT_EVENT_NAME})
     await this.eventBroadcaster.broadcastEvent(event)
+  }
+
+  invokeStepDefinition(stepDefinition, step) {
+    return stepDefinition.invoke({
+      defaultTimeout: this.supportCodeLibrary.defaultTimeout,
+      scenarioResult: this.scenarioResult,
+      step,
+      transformLookup: this.supportCodeLibrary.transformLookup,
+      world: this.world
+    })
   }
 
   isSkippingSteps() {
@@ -42,18 +49,17 @@ export default class ScenarioRunner {
         status: Status.SKIPPED
       })
     } else {
-      return await hookDefinition.invoke({
-        defaultTimeout: this.defaultTimeout,
-        scenarioResult: this.scenarioResult,
-        step: hook,
-        transformLookup: this.transformLookup,
-        world: this.world
-      })
+      return await this.invokeStepDefinition(hookDefinition, hook)
     }
   }
 
   async processStep(step) {
-    const stepDefinitions = this.supportCodeLibrary.getStepDefinitions(step.name)
+    const stepDefinitions = this.supportCodeLibrary.stepDefinitions.filter((stepDefinition) => {
+      return stepDefinition.matchesStepName({
+        stepName: step.name,
+        transformLookup: this.supportCodeLibrary.transformLookup
+      })
+    })
     if (stepDefinitions.length === 0) {
       return new StepResult({
         step,
@@ -72,13 +78,7 @@ export default class ScenarioRunner {
         status: Status.SKIPPED
       })
     } else {
-      return await stepDefinitions[0].invoke({
-        defaultTimeout: this.defaultTimeout,
-        scenarioResult: this.scenarioResult,
-        step,
-        transformLookup: this.transformLookup,
-        world: this.world
-      })
+      return await this.invokeStepDefinition(stepDefinitions[0], step)
     }
   }
 
@@ -95,6 +95,9 @@ export default class ScenarioRunner {
 
   async runHooks({hookDefinitions, hookKeyword}) {
     await Promise.each(hookDefinitions, async (hookDefinition) => {
+      if (!hookDefinition.appliesToScenario(this.scenario)) {
+        return
+      }
       const hook = new Hook({keyword: hookKeyword, scenario: this.scenario})
       const event = new Event({data: hook, name: Event.STEP_EVENT_NAME})
       await this.eventBroadcaster.broadcastAroundEvent(event, async() => {
@@ -106,14 +109,14 @@ export default class ScenarioRunner {
 
   async runAfterHooks() {
     await this.runHooks({
-      hookDefinitions: this.supportCodeLibrary.getAfterHookDefinitions(this.scenario),
+      hookDefinitions: this.supportCodeLibrary.afterHookDefinitions.reverse(),
       hookKeyword: Hook.AFTER_STEP_KEYWORD
     })
   }
 
   async runBeforeHooks() {
     await this.runHooks({
-      hookDefinitions: this.supportCodeLibrary.getBeforeHookDefinitions(this.scenario),
+      hookDefinitions: this.supportCodeLibrary.beforeHookDefinitions,
       hookKeyword: Hook.BEFORE_STEP_KEYWORD
     })
   }

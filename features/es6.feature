@@ -1,10 +1,10 @@
+@es6
 Feature: ES6 compatibility
   In order to use new JavaScript features
   As a developer
   I want Cucumber to provide the possibility to use ES6 features
 
-  @es6
-  Scenario: Step is a generator
+  Background:
     Given a file named "features/a.feature" with:
       """
       Feature: Step is a generator
@@ -31,5 +31,27 @@ Feature: ES6 compatibility
       };
       module.exports = cucumberSteps;
       """
+
+  Scenario: without generator function runner
     When I run cucumber-js with `--strict`
-    Then it passes
+    Then the exit status should be 1
+    And the error output contains the text:
+      """
+      The following hook/step definitions use generator functions:
+
+        features/step_definitions/cucumber_steps.js:8
+
+      Use 'this.setGeneratorFunctionWrapper(wrapper)' to configure how to wrap them.
+      """
+
+  Scenario: with generator function wrapper
+    Given a file named "features/support/setup.js" with:
+      """
+      var Promise = require('bluebird');
+
+      module.exports = function() {
+        this.setGeneratorFunctionWrapper(Promise.coroutine);
+      };
+      """
+    When I run cucumber-js with `--strict`
+    Then the exit status should be 0

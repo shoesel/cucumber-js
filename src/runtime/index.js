@@ -15,8 +15,8 @@ export default class Runtime {
 
   async start() {
     const eventBroadcaster = new EventBroadcaster({
-      listenerDefaultTimeout: this.supportCodeLibrary.getDefaultTimeout(),
-      listeners: this.listeners.concat(this.supportCodeLibrary.getListeners())
+      listenerDefaultTimeout: this.supportCodeLibrary.defaultTimeout,
+      listeners: this.listeners.concat(this.supportCodeLibrary.listeners)
     })
     const featuresRunner = new FeaturesRunner({
       eventBroadcaster,

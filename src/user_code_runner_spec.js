@@ -1,4 +1,3 @@
-import Promise from 'bluebird'
 import UserCodeRunner from './user_code_runner'
 
 describe('UserCodeRunner', function () {
@@ -118,56 +117,6 @@ describe('UserCodeRunner', function () {
       })
     })
 
-    describe('function uses generator interface', function() {
-      describe('function asynchronously throws', function() {
-        // Cannot unit test because mocha also sets an uncaught exception handler
-      })
-
-      describe('function throws', function() {
-        beforeEach(function() {
-          this.options.fn = function *() {
-            yield Promise.resolve(1)
-            throw 'error'
-          }
-        })
-
-        it('returns the error', async function () {
-          const {error, result} = await UserCodeRunner.run(this.options)
-          expect(error).to.eql('error')
-          expect(result).to.be.undefined
-        })
-      })
-
-      describe('function returns', function() {
-        beforeEach(function() {
-          this.options.fn = function *() {
-            return yield Promise.resolve('result')
-          }
-        })
-
-        it('returns the return value of the function', async function () {
-          const {error, result} = await UserCodeRunner.run(this.options)
-          expect(error).to.be.undefined
-          expect(result).to.eql('result')
-        })
-      })
-
-      describe('function times out', function() {
-        beforeEach(function() {
-          this.options.fn = function *() {
-            yield Promise.delay(200)
-          }
-        })
-
-        it('returns timeout as an error', async function () {
-          const {error, result} = await UserCodeRunner.run(this.options)
-          expect(error).to.be.instanceof(Error)
-          expect(error.message).to.eql('function timed out after 100 milliseconds')
-          expect(result).to.be.undefined
-        })
-      })
-    })
-
     describe('function uses promise interface', function() {
       describe('function asynchronously throws', function() {
         // Cannot unit test because mocha also sets an uncaught exception handler
@@ -247,22 +196,7 @@ describe('UserCodeRunner', function () {
       })
     })
 
-    describe('function uses multiple asynchronous interfaces: callback, generator', function() {
-      beforeEach(function() {
-        this.options.fn = function *(callback) {
-          yield Promise.resolve(1)
-          callback()
-        }
-      })
-
-      it('returns an error that multiple interface are used', async function () {
-        const {error, result} = await UserCodeRunner.run(this.options)
-        expect(error).to.eql('function uses multiple asynchronous interfaces: callback, generator')
-        expect(result).to.be.undefined
-      })
-    })
-
-    describe('function uses multiple asynchronous interfaces: callback, promise', function() {
+    describe('function uses multiple asynchronous interfaces: callback and promise', function() {
       beforeEach(function() {
         this.options.fn = function(callback) {
           return {
@@ -273,7 +207,7 @@ describe('UserCodeRunner', function () {
 
       it('returns an error that multiple interface are used', async function () {
         const {error, result} = await UserCodeRunner.run(this.options)
-        expect(error).to.eql('function uses multiple asynchronous interfaces: callback, promise')
+        expect(error).to.eql('function uses multiple asynchronous interfaces: callback and promise')
         expect(result).to.be.undefined
       })
     })

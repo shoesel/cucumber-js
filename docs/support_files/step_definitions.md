@@ -28,6 +28,7 @@ module.exports = function () {
   });
 
   // Asynchronous - generator
+  // Requires this.setGeneratorFunctionWrapper(fn)
   this.Then(/^Then the file named (.*) is empty$/, function *(fileName) {
     contents = yield fs.readFile(fileName, 'utf8');
     assert.equal(contents, '');
@@ -42,8 +43,6 @@ module.exports = function () {
   });
 };
 ```
-
-When the step definition function is a generator, it is run with [co](https://github.com/tj/co).
 
 ## Pending steps
 

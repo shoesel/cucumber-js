@@ -6,8 +6,7 @@ import fs from 'mz/fs'
 import Promise from 'bluebird'
 import Runtime from '../runtime'
 import ScenarioFilter from '../scenario_filter'
-import SupportCodeLibrary from '../support_code_library'
-import SupportCodeLibraryOptionsBuilder from '../support_code_library_options_builder'
+import SupportCodeLibraryBuilder from '../support_code_library_builder'
 
 export default class Cli {
   constructor ({argv, cwd, stdout}) {
@@ -41,8 +40,7 @@ export default class Cli {
 
   getSupportCodeLibrary(supportCodePaths) {
     const fns = getSupportCodeFunctions(supportCodePaths)
-    const options = SupportCodeLibraryOptionsBuilder.build({cwd: this.cwd, fns})
-    return new SupportCodeLibrary(options)
+    return SupportCodeLibraryBuilder.build({cwd: this.cwd, fns})
   }
 
   async run() {

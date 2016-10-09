@@ -1,9 +1,9 @@
-import SupportCodeLibraryOptionsBuilder from './support_code_library_options_builder'
+import SupportCodeLibraryBuilder from './support_code_library_builder'
 
-describe('SupportCodeLibraryOptionsBuilder', function () {
+describe('SupportCodeLibraryBuilder', function () {
   describe('no support code fns', function() {
     beforeEach(function() {
-      this.options = SupportCodeLibraryOptionsBuilder.build({cwd: 'path/to/project', fns: []})
+      this.options = SupportCodeLibraryBuilder.build({cwd: 'path/to/project', fns: []})
     })
 
     it('returns the default options', function() {

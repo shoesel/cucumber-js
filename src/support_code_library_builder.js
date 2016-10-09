@@ -1,10 +1,13 @@
 import _ from 'lodash'
+import {Transform} from 'cucumber-expressions'
 import HookDefinition from './models/hook_definition'
+import isGenerator from 'is-generator'
 import Listener from './listener'
+import path from 'path'
+import proxyWithArity from './proxy_with_arity'
 import StackTrace from 'stacktrace-js'
 import StepDefinition from './models/step_definition'
 import TransformLookupBuilder from './transform_lookup_builder'
-import {Transform} from 'cucumber-expressions'
 
 function build({cwd, fns}) {
   const options = {
@@ -15,6 +18,7 @@ function build({cwd, fns}) {
     stepDefinitions: [],
     transformLookup: TransformLookupBuilder.build()
   }
+  let generatorFunctionWrapper = null
   const fnContext = {
     addTransform({captureGroupRegexps, transformer, typeName}) {
       const transform = new Transform(
@@ -35,12 +39,23 @@ function build({cwd, fns}) {
     setDefaultTimeout(milliseconds) {
       options.defaultTimeout = milliseconds
     },
+    setGeneratorFunctionWrapper(fn) {
+      generatorFunctionWrapper = fn
+    },
     World(parameters) {
       this.parameters = parameters
     }
   }
   fnContext.Given = fnContext.When = fnContext.Then = fnContext.defineStep
   fns.forEach((fn) => fn.call(fnContext))
+  wrapGeneratorFunctions({
+    cwd,
+    definitions: _.chain(['afterHook', 'beforeHook', 'step'])
+      .map((key) => options[key + 'Definitions'])
+      .flatten()
+      .value(),
+    generatorFunctionWrapper
+  })
   options.World = fnContext.World
   return options
 }
@@ -88,6 +103,30 @@ function registerHandler(cwd, collection) {
     listener.setHandlerForEventName(eventName, handler)
     collection.push(listener)
   }
+}
+
+function wrapGeneratorFunctions({cwd, definitions, generatorFunctionWrapper}) {
+  const definitionsToWrap = _.filter(definitions, (definition) => {
+    return isGenerator.fn(definition.code)
+  })
+  if (definitionsToWrap.length > 0 && !generatorFunctionWrapper) {
+    const references = definitionsToWrap.map((definition) => {
+      return path.relative(cwd, definition.uri) + ':' + definition.line
+    }).join('\n  ')
+    const message = `
+      The following hook/step definitions use generator functions:
+
+        ${references}
+
+      Use 'this.setGeneratorFunctionWrapper(wrapper)' to configure how to wrap them.
+      `
+    throw new Error(message)
+  }
+  definitionsToWrap.forEach((definition) => {
+    const codeLength = definition.code.length
+    const wrappedFn = generatorFunctionWrapper(definition.code)
+    definition.code = proxyWithArity(wrappedFn, codeLength)
+  })
 }
 
 export default {build}
