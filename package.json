@@ -146,6 +146,7 @@
     "chai": "^3.5.0",
     "coffee-script": "^1.10.0",
     "connect": "^3.4.0",
+    "cross-env": "^3.1.2",
     "eslint": "^3.1.1",
     "eslint-plugin-babel": "^3.3.0",
     "exorcist": "^0.4.0",
@@ -159,15 +160,15 @@
     "tmp": "0.0.29"
   },
   "scripts": {
-    "build-local-continuous": "BABEL_ENV=production babel src --watch -d lib --ignore '**/*_spec.js' --retain-lines",
-    "build-local": "BABEL_ENV=production babel src -d lib --ignore '**/*_spec.js' --retain-lines",
-    "build-release": "BABEL_ENV=production babel src -o dist/cucumber.js --ignore '**/*_spec.js' --retain-lines --source-maps inline",
+    "build-local-continuous": "cross-env BABEL_ENV=production babel src --watch -d lib --ignore '**/*_spec.js' --retain-lines",
+    "build-local": "cross-env BABEL_ENV=production babel src -d lib --ignore '**/*_spec.js' --retain-lines",
+    "build-release": "cross-env BABEL_ENV=production babel src -o dist/cucumber.js --ignore '**/*_spec.js' --retain-lines --source-maps inline",
     "feature-test-es5": "node ./bin/cucumber.js -p es5",
     "feature-test": "node ./bin/cucumber.js",
     "lint": "eslint src/**",
     "prefeature-test-es5": "npm run build-local",
     "prefeature-test": "npm run build-local",
-    "prepublish": "npm run build-local",
+    "prepublish": "npm run build-release",
     "test": "npm run lint && npm run unit-test && npm run feature-test",
     "unit-test": "mycha"
   },
