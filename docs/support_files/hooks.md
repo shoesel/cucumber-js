@@ -47,17 +47,16 @@ var myHooks = function () {
   });
 
   this.Before({tags: "@foo and @bar"}, function () {
-    // This hook will be executed before scenarios tagged with @foo AND @bar
+    // This hook will be executed before scenarios tagged with @foo and @bar
   });
 
   this.Before({tags: "@foo or @bar"}, function () {
-    // This hook will be executed before scenarios tagged with @foo OR @bar
+    // This hook will be executed before scenarios tagged with @foo or @bar
   });
 
   // You can use the following shorthand when only specifying tags
   this.Before("@foo", function () {
     // This hook will be executed before scenarios tagged with @foo
-    // ...
   });
 };
 

@@ -62,7 +62,9 @@ function build({cwd, fns}) {
 
 function defineHook(collection) {
   return (options, code) => {
-    if (typeof(options) === 'function') {
+    if (typeof(options) === 'string') {
+      options = {tags: options}
+    } else if (typeof(options) === 'function') {
       code = options
       options = {}
     }
