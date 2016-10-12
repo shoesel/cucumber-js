@@ -4,6 +4,7 @@
 
 #### Breaking Changes
 
+* Drop support for Node 0.10 (LTS ends 2016-10-31) and Node 0.12 (LTS ends 2016-12-31)
 * CLI
   * `--colors / --no-colors` has moved to `--format-options '{"colorsEnabled": "<BOOLEAN>"}'`
   * `--require <DIR|FILE>`: the required files are no longer reordered to require anything in a `support` directory first
