@@ -4,7 +4,7 @@ import HookDefinition from './models/hook_definition'
 import isGenerator from 'is-generator'
 import Listener from './listener'
 import path from 'path'
-import proxyWithArity from './proxy_with_arity'
+import arity from 'util-arity'
 import StackTrace from 'stacktrace-js'
 import StepDefinition from './models/step_definition'
 import TransformLookupBuilder from './transform_lookup_builder'
@@ -127,7 +127,7 @@ function wrapGeneratorFunctions({cwd, definitions, generatorFunctionWrapper}) {
   definitionsToWrap.forEach((definition) => {
     const codeLength = definition.code.length
     const wrappedFn = generatorFunctionWrapper(definition.code)
-    definition.code = proxyWithArity(wrappedFn, codeLength)
+    definition.code = arity(codeLength, wrappedFn)
   })
 }
 
