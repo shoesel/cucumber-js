@@ -165,13 +165,13 @@
     "build-local-continuous": "cross-env NODE_ENV=production babel src --watch -d lib --ignore '**/*_spec.js' --retain-lines",
     "build-local": "cross-env NODE_ENV=production babel src -d lib --ignore '**/*_spec.js' --retain-lines",
     "build-release": "cross-env NODE_ENV=production babel src -o dist/cucumber.js --ignore '**/*_spec.js' --retain-lines --source-maps inline",
-    "coverage": "cross-env NODE_ENV=test nyc mocha src/** src/**/**",
+    "coverage": "cross-env NODE_ENV=test nyc mocha src",
     "feature-test": "node ./bin/cucumber.js",
     "lint": "eslint src/**",
     "prefeature-test": "npm run build-local",
     "prepublish": "npm run build-release",
     "test": "npm run lint && npm run unit-test && npm run feature-test",
-    "unit-test": "mocha src/** src/**/**"
+    "unit-test": "mocha src"
   },
   "bin": {
     "cucumber.js": "./bin/cucumber.js",
