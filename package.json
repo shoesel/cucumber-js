@@ -136,6 +136,7 @@
     "ansi_up": "^1.3.0",
     "babel-cli": "^6.10.1",
     "babel-eslint": "^6.1.2",
+    "babel-plugin-istanbul": "^2.0.1",
     "babel-plugin-transform-async-to-generator": "^6.8.0",
     "babel-plugin-transform-function-bind": "^6.8.0",
     "babel-plugin-transform-regenerator": "^6.9.0",
@@ -152,7 +153,8 @@
     "exorcist": "^0.4.0",
     "fs-extra": "^0.30.0",
     "json-diff": "^0.3.1",
-    "mycha": "^3.0.0",
+    "mocha": "^3.1.2",
+    "nyc": "^8.3.1",
     "regenerator-runtime": "^0.9.5",
     "serve-static": "^1.10.0",
     "sinon": "^1.17.4",
@@ -160,15 +162,16 @@
     "tmp": "0.0.29"
   },
   "scripts": {
-    "build-local-continuous": "cross-env BABEL_ENV=production babel src --watch -d lib --ignore '**/*_spec.js' --retain-lines",
-    "build-local": "cross-env BABEL_ENV=production babel src -d lib --ignore '**/*_spec.js' --retain-lines",
-    "build-release": "cross-env BABEL_ENV=production babel src -o dist/cucumber.js --ignore '**/*_spec.js' --retain-lines --source-maps inline",
+    "build-local-continuous": "cross-env NODE_ENV=production babel src --watch -d lib --ignore '**/*_spec.js' --retain-lines",
+    "build-local": "cross-env NODE_ENV=production babel src -d lib --ignore '**/*_spec.js' --retain-lines",
+    "build-release": "cross-env NODE_ENV=production babel src -o dist/cucumber.js --ignore '**/*_spec.js' --retain-lines --source-maps inline",
+    "coverage": "cross-env NODE_ENV=test nyc mocha src/** src/**/**",
     "feature-test": "node ./bin/cucumber.js",
     "lint": "eslint src/**",
     "prefeature-test": "npm run build-local",
     "prepublish": "npm run build-release",
     "test": "npm run lint && npm run unit-test && npm run feature-test",
-    "unit-test": "mycha"
+    "unit-test": "mocha src/** src/**/**"
   },
   "bin": {
     "cucumber.js": "./bin/cucumber.js",

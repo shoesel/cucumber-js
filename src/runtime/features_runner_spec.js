@@ -1,4 +1,4 @@
-import {expectToHearEvents} from '../../spec/listener_helpers'
+import {expectToHearEvents} from '../../test/listener_helpers'
 import EventBroadcaster from './event_broadcaster'
 import FeaturesRunner from './features_runner'
 import Promise from 'bluebird'

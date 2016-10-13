@@ -8,10 +8,12 @@
     "production": {
       "plugins": [
         "transform-regenerator",
-        ["transform-runtime", {
-          "polyfill": false,
-          "regenerator": true
-        }]
+        ["transform-runtime", {"polyfill": false, "regenerator": true}]
+      ]
+    },
+    "test": {
+      "plugins": [
+        ["istanbul", {"exclude": ["test/*.js", "**/*_spec.js"]}]
       ]
     }
   }
