@@ -5,6 +5,5 @@ var common = [
 ].join(' ')
 
 module.exports = {
-  'default': common,
-  'es5': common + ' --tags "not @es6"'
+  'default': common
 };
