@@ -26,13 +26,14 @@ export default class PathExpander {
     }
   }
 
-  expandDirectoryWithExtensions(realPath, extensions) {
+  async expandDirectoryWithExtensions(realPath, extensions) {
     let pattern = realPath + '/**/*.'
     if (extensions.length > 1) {
       pattern += '{' + extensions.join(',') + '}'
     } else {
       pattern += extensions[0]
     }
-    return Promise.promisify(glob)(pattern)
+    const results = await Promise.promisify(glob)(pattern)
+    return results.map((filePath) => filePath.replace(/\//g, path.sep))
   }
 }

@@ -34,7 +34,7 @@ describe('PathExpander', function() {
           this.results = await this.pathExpander.expandPathsWithExtensions(['subdirectory'], ['ext'])
         })
 
-        it('returns an emoty array', function() {
+        it('returns an empty array', function() {
           expect(this.results).to.eql([])
         })
       })
@@ -45,7 +45,7 @@ describe('PathExpander', function() {
           this.results = await this.pathExpander.expandPathsWithExtensions(['subdirectory'], ['ext'])
         })
 
-        it('returns an emoty array', async function() {
+        it('returns the file', async function() {
           const realPath = await fs.realpath(path.join(this.subdirectoryPath, 'a.ext'))
           expect(this.results).to.eql([realPath])
         })
@@ -59,7 +59,7 @@ describe('PathExpander', function() {
           this.results = await this.pathExpander.expandPathsWithExtensions(['subdirectory'], ['ext'])
         })
 
-        it('returns an emoty array', async function() {
+        it('returns the file', async function() {
           const realPath = await fs.realpath(path.join(this.nestedSubdirectoryPath, 'a.ext'))
           expect(this.results).to.eql([realPath])
         })

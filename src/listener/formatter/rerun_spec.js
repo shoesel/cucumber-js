@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import RerunFormatter from './rerun'
 import Status from '../../status'
+import path from 'path'
 
 describe('RerunFormatter', function() {
   beforeEach(function() {
@@ -8,8 +9,13 @@ describe('RerunFormatter', function() {
     const logFn = (data) => {
       this.output += data
     }
+    this.projectPath = path.resolve('path', 'to', 'project')
+    this.feature1RelativePath = path.join('features', 'a.feature')
+    this.feature1Path = path.join(this.projectPath, this.feature1RelativePath)
+    this.feature2RelativePath = path.join('features', 'b.feature')
+    this.feature2Path = path.join(this.projectPath, this.feature2RelativePath)
     this.rerunFormatter = new RerunFormatter({
-      cwd: 'path/to/project',
+      cwd: this.projectPath,
       log: logFn
     })
   })
@@ -43,7 +49,7 @@ describe('RerunFormatter', function() {
       beforeEach(function() {
         const scenario = {
           line: 1,
-          uri: 'path/to/project/features/a.feature'
+          uri: this.feature1Path
         }
         const scenarioResult = {
           scenario,
@@ -54,7 +60,7 @@ describe('RerunFormatter', function() {
       })
 
       it('outputs the reference needed to run the scenario again', function() {
-        expect(this.output).to.eql('features/a.feature:1')
+        expect(this.output).to.eql(`${this.feature1RelativePath}:1`)
       })
     })
   })
@@ -63,7 +69,7 @@ describe('RerunFormatter', function() {
     beforeEach(function() {
       const scenario1 = {
         line: 1,
-        uri: 'path/to/project/features/a.feature'
+        uri: this.feature1Path
       }
       const scenarioResult1 = {
         scenario: scenario1,
@@ -72,7 +78,7 @@ describe('RerunFormatter', function() {
       this.rerunFormatter.handleScenarioResult(scenarioResult1)
       const scenario2 = {
         line: 2,
-        uri: 'path/to/project/features/a.feature'
+        uri: this.feature1Path
       }
       const scenarioResult2 = {
         scenario: scenario2,
@@ -83,7 +89,7 @@ describe('RerunFormatter', function() {
     })
 
     it('outputs the reference needed to run the scenarios again', function() {
-      expect(this.output).to.eql('features/a.feature:1:2')
+      expect(this.output).to.eql(`${this.feature1RelativePath}:1:2`)
     })
   })
 
@@ -91,7 +97,7 @@ describe('RerunFormatter', function() {
     beforeEach(function() {
       const scenario1 = {
         line: 1,
-        uri: 'path/to/project/features/a.feature'
+        uri: this.feature1Path
       }
       const scenarioResult1 = {
         scenario: scenario1,
@@ -100,7 +106,7 @@ describe('RerunFormatter', function() {
       this.rerunFormatter.handleScenarioResult(scenarioResult1)
       const scenario2 = {
         line: 2,
-        uri: 'path/to/project/features/b.feature'
+        uri: this.feature2Path
       }
       const scenarioResult2 = {
         scenario: scenario2,
@@ -112,8 +118,8 @@ describe('RerunFormatter', function() {
 
     it('outputs the references needed to run the scenarios again', function() {
       expect(this.output).to.eql(
-        'features/a.feature:1\n' +
-        'features/b.feature:2'
+        `${this.feature1RelativePath}:1\n` +
+        `${this.feature2RelativePath}:2`
       )
     })
   })
