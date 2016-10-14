@@ -1,4 +1,4 @@
-import UserCodeRunner from '../user_code_runner'
+import UserCodeRunner from './user_code_runner'
 import path from 'path'
 
 export default class Listener {

@@ -4,6 +4,7 @@ import HookDefinition from '../models/hook_definition'
 import Promise from 'bluebird'
 import ScenarioRunner from './scenario_runner'
 import Status from '../status'
+import StepRunner from './step_runner'
 
 describe('ScenarioRunner', function () {
   beforeEach(function () {
@@ -22,12 +23,17 @@ describe('ScenarioRunner', function () {
       World() {}
     }
     this.options = {}
+    sinon.stub(StepRunner, 'run')
     this.scenarioRunner = new ScenarioRunner({
       eventBroadcaster: this.eventBroadcaster,
       options: this.options,
       scenario: this.scenario,
       supportCodeLibrary: this.supportCodeLibrary
     })
+  })
+
+  afterEach(function() {
+    StepRunner.run.restore()
   })
 
   describe('run()', function () {
@@ -58,10 +64,8 @@ describe('ScenarioRunner', function () {
           status: Status.PASSED,
           step: this.step
         }
-        const stepDefinition = createMock({
-          invoke: Promise.resolve(this.stepResult),
-          matchesStepName: true
-        })
+        const stepDefinition = createMock({matchesStepName: true})
+        StepRunner.run.returns(Promise.resolve(this.stepResult))
         this.supportCodeLibrary.stepDefinitions = [stepDefinition]
         this.scenario.steps = [this.step]
         this.scenarioResult = await this.scenarioRunner.run()
@@ -91,10 +95,8 @@ describe('ScenarioRunner', function () {
           status: Status.FAILED,
           step: this.step
         }
-        const stepDefinition = createMock({
-          invoke: Promise.resolve(this.stepResult),
-          matchesStepName: true
-        })
+        const stepDefinition = createMock({matchesStepName: true})
+        StepRunner.run.returns(Promise.resolve(this.stepResult))
         this.supportCodeLibrary.stepDefinitions = [stepDefinition]
         this.scenario.steps = [this.step]
         this.scenarioResult = await this.scenarioRunner.run()

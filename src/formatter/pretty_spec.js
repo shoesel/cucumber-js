@@ -1,11 +1,11 @@
 import _ from 'lodash'
-import DataTable from '../../models/step_arguments/data_table'
-import DocString from '../../models/step_arguments/doc_string'
+import DataTable from '../models/step_arguments/data_table'
+import DocString from '../models/step_arguments/doc_string'
 import figures from 'figures'
-import getColorFns from '../../get_color_fns'
+import getColorFns from './get_color_fns'
 import PrettyFormatter from './pretty'
-import Status from '../../status'
-import Step from '../../models/step'
+import Status from '../status'
+import Step from '../models/step'
 import SummaryFormatter from './summary'
 
 describe('PrettyFormatter', function() {

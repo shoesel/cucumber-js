@@ -1,4 +1,4 @@
-import Listener from '../'
+import Listener from '../listener'
 
 export default class Formatter extends Listener {
   constructor(options) {

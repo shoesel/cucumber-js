@@ -1,12 +1,12 @@
 import _ from 'lodash'
 import {getExpandedArgv, getFeatures, getSupportCodeFunctions} from './helpers'
 import ConfigurationBuilder from './configuration_builder'
-import FormatterBuilder from '../listener/formatter/builder'
+import FormatterBuilder from '../formatter/builder'
 import fs from 'mz/fs'
 import Promise from 'bluebird'
 import Runtime from '../runtime'
 import ScenarioFilter from '../scenario_filter'
-import SupportCodeLibraryBuilder from '../support_code_library_builder'
+import SupportCodeLibraryBuilder from '../support_code_library/builder'
 
 export default class Cli {
   constructor ({argv, cwd, stdout}) {

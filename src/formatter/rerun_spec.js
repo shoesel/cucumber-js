@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import path from 'path'
 import RerunFormatter from './rerun'
-import Status from '../../status'
+import Status from '../status'
 
 describe('RerunFormatter', function() {
   beforeEach(function() {

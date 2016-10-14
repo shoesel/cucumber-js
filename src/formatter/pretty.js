@@ -1,8 +1,8 @@
-import DataTable from '../../models/step_arguments/data_table'
-import DocString from '../../models/step_arguments/doc_string'
+import DataTable from '../models/step_arguments/data_table'
+import DocString from '../models/step_arguments/doc_string'
 import figures from 'figures'
-import Hook from '../../models/hook'
-import Status from '../../status'
+import Hook from '../models/hook'
+import Status from '../status'
 import SummaryFormatter from './summary'
 import Table from 'cli-table'
 

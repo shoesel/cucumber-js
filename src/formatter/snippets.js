@@ -1,5 +1,5 @@
 import Formatter from './'
-import Status from '../../status'
+import Status from '../status'
 
 export default class SnippetsFormatter extends Formatter {
   handleStepResult(stepResult) {

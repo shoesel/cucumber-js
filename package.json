@@ -104,9 +104,9 @@
   "directories": {
     "lib": "./lib"
   },
-  "main": "./lib/cucumber",
+  "main": "./lib/index",
   "engines": {
-    "node": ">=0.10"
+    "node": ">=4"
   },
   "dependencies": {
     "babel-runtime": "^6.11.6",

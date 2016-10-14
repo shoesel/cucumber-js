@@ -1,13 +1,13 @@
 import _ from 'lodash'
-import getColorFns from '../../get_color_fns'
-import JavascriptSnippetSyntax from '../../step_definition_snippet_builder/javascript_snippet_syntax'
+import getColorFns from './get_color_fns'
+import JavascriptSnippetSyntax from './step_definition_snippet_builder/javascript_snippet_syntax'
 import JsonFormatter from './json'
 import path from 'path'
 import PrettyFormatter from './pretty'
 import ProgressFormatter from './progress'
 import RerunFormatter from './rerun'
 import SnippetsFormatter from './snippets'
-import StepDefinitionSnippetBuilder from '../../step_definition_snippet_builder'
+import StepDefinitionSnippetBuilder from './step_definition_snippet_builder'
 import SummaryFormatter from './summary'
 
 export default class FormatterBuilder {

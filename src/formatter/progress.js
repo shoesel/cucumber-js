@@ -1,5 +1,5 @@
-import Hook from '../../models/hook'
-import Status from '../../status'
+import Hook from '../models/hook'
+import Status from '../status'
 import SummaryFormatter from './summary'
 
 export default class ProgressFormatter extends SummaryFormatter {

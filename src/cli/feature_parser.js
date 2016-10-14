@@ -1,4 +1,4 @@
-import Feature from './models/feature'
+import Feature from '../models/feature'
 import Gherkin from 'gherkin'
 
 const gherkinCompiler = new Gherkin.Compiler()

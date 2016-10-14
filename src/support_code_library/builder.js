@@ -1,13 +1,10 @@
 import _ from 'lodash'
-import {Transform} from 'cucumber-expressions'
 import arity from 'util-arity'
-import HookDefinition from './models/hook_definition'
 import isGenerator from 'is-generator'
-import Listener from './listener'
+import {Transform} from 'cucumber-expressions'
 import path from 'path'
-import StackTrace from 'stacktrace-js'
-import StepDefinition from './models/step_definition'
 import TransformLookupBuilder from './transform_lookup_builder'
+import * as helpers from './helpers'
 
 function build({cwd, fns}) {
   const options = {
@@ -29,10 +26,10 @@ function build({cwd, fns}) {
       )
       options.transformLookup.addTransform(transform)
     },
-    After: defineHook(options.afterHookDefinitions),
-    Before: defineHook(options.beforeHookDefinitions),
-    defineStep: defineStep(options.stepDefinitions),
-    registerHandler: registerHandler(cwd, options.listeners),
+    After: helpers.defineHook(options.afterHookDefinitions),
+    Before: helpers.defineHook(options.beforeHookDefinitions),
+    defineStep: helpers.defineStep(options.stepDefinitions),
+    registerHandler: helpers.registerHandler(cwd, options.listeners),
     registerListener(listener) {
       options.listeners.push(listener)
     },
@@ -60,54 +57,7 @@ function build({cwd, fns}) {
   return options
 }
 
-function defineHook(collection) {
-  return (options, code) => {
-    if (typeof(options) === 'string') {
-      options = {tags: options}
-    } else if (typeof(options) === 'function') {
-      code = options
-      options = {}
-    }
-    const {line, uri} = getDefinitionLineAndUri()
-    const hookDefinition = new HookDefinition({code, line, options, uri})
-    collection.push(hookDefinition)
-  }
-}
-
-function defineStep(collection) {
-  return (pattern, options, code) => {
-    if (typeof(options) === 'function') {
-      code = options
-      options = {}
-    }
-    const {line, uri} = getDefinitionLineAndUri()
-    const stepDefinition = new StepDefinition({code, line, options, pattern, uri})
-    collection.push(stepDefinition)
-  }
-}
-
-function getDefinitionLineAndUri() {
-  const stackframes = StackTrace.getSync()
-  const stackframe = stackframes.length > 2 ? stackframes[2] : stackframes[0]
-  const line = stackframe.getLineNumber()
-  const uri = stackframe.getFileName() || 'unknown'
-  return {line, uri}
-}
-
-function registerHandler(cwd, collection) {
-  return (eventName, options, handler) => {
-    if (typeof(options) === 'function') {
-      handler = options
-      options = {}
-    }
-    _.assign(options, getDefinitionLineAndUri(), {cwd})
-    const listener = new Listener(options)
-    listener.setHandlerForEventName(eventName, handler)
-    collection.push(listener)
-  }
-}
-
-function wrapGeneratorFunctions({cwd, definitions, generatorFunctionWrapper}) {
+export function wrapGeneratorFunctions({cwd, definitions, generatorFunctionWrapper}) {
   const definitionsToWrap = _.filter(definitions, (definition) => {
     return isGenerator.fn(definition.code)
   })

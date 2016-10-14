@@ -1,5 +1,5 @@
-import getColorFns from '../../get_color_fns'
-import Status, {getStatusMapping} from '../../status'
+import getColorFns from './get_color_fns'
+import Status, {getStatusMapping} from '../status'
 import SummaryFormatter from './summary'
 
 describe('SummaryFormatter', function() {

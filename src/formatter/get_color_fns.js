@@ -1,5 +1,5 @@
 import colors from 'colors/safe'
-import Status from './status'
+import Status from '../status'
 
 export default function getColorFns(enabled) {
   colors.enabled = enabled

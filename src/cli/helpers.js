@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import ArgvParser from './argv_parser'
 import fs from 'mz/fs'
-import Parser from '../parser'
+import Parser from './feature_parser'
 import ProfileLoader from './profile_loader'
 import Promise from 'bluebird'
 

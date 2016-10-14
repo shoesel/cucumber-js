@@ -1,8 +1,8 @@
 import _ from 'lodash'
-import DataTable from '../../models/step_arguments/data_table'
-import DocString from '../../models/step_arguments/doc_string'
+import DataTable from '../models/step_arguments/data_table'
+import DocString from '../models/step_arguments/doc_string'
 import Formatter from './'
-import Status from '../../status'
+import Status from '../status'
 
 export default class JsonFormatter extends Formatter {
   constructor(options) {
