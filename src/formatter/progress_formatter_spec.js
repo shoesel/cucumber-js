@@ -1,9 +1,9 @@
 import getColorFns from './get_color_fns'
 import Hook from '../models/hook'
-import ProgressFormatter from './progress'
+import ProgressFormatter from './progress_formatter'
 import Status from '../status'
 import Step from '../models/step'
-import SummaryFormatter from './summary'
+import SummaryFormatter from './summary_formatter'
 
 describe('ProgressFormatter', function() {
   beforeEach(function() {

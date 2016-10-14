@@ -1,6 +1,6 @@
 import Hook from '../models/hook'
 import Status from '../status'
-import SummaryFormatter from './summary'
+import SummaryFormatter from './summary_formatter'
 
 export default class ProgressFormatter extends SummaryFormatter {
   handleStepResult(stepResult) {

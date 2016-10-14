@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import path from 'path'
-import RerunFormatter from './rerun'
+import RerunFormatter from './rerun_formatter'
 import Status from '../status'
 
 describe('RerunFormatter', function() {

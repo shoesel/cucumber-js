@@ -3,7 +3,7 @@ import DocString from '../models/step_arguments/doc_string'
 import figures from 'figures'
 import Hook from '../models/hook'
 import Status from '../status'
-import SummaryFormatter from './summary'
+import SummaryFormatter from './summary_formatter'
 import Table from 'cli-table'
 
 export default class PrettyFormatter extends SummaryFormatter {

@@ -1,6 +1,6 @@
 import getColorFns from './get_color_fns'
 import Status, {getStatusMapping} from '../status'
-import SummaryFormatter from './summary'
+import SummaryFormatter from './summary_formatter'
 
 describe('SummaryFormatter', function() {
   beforeEach(function() {

@@ -3,10 +3,10 @@ import DataTable from '../models/step_arguments/data_table'
 import DocString from '../models/step_arguments/doc_string'
 import figures from 'figures'
 import getColorFns from './get_color_fns'
-import PrettyFormatter from './pretty'
+import PrettyFormatter from './pretty_formatter'
 import Status from '../status'
 import Step from '../models/step'
-import SummaryFormatter from './summary'
+import SummaryFormatter from './summary_formatter'
 
 describe('PrettyFormatter', function() {
   beforeEach(function() {

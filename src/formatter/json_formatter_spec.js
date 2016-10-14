@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import DataTable from '../models/step_arguments/data_table'
 import DocString from '../models/step_arguments/doc_string'
-import JsonFormatter from './json'
+import JsonFormatter from './json_formatter'
 import Status from '../status'
 
 describe('JsonFormatter', function () {
