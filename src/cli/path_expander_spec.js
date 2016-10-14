@@ -1,8 +1,8 @@
-import PathExpander from './path_expander'
-import tmp from 'tmp'
 import {promisify} from 'bluebird'
 import fs from 'mz/fs'
 import path from 'path'
+import PathExpander from './path_expander'
+import tmp from 'tmp'
 
 describe('PathExpander', function() {
   describe('expandPathsWithExtensions', function() {

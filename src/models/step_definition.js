@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import {CucumberExpression, RegularExpression} from 'cucumber-expressions'
 import AttachmentManager from '../attachment_manager'
 import DataTable from './step_arguments/data_table'
 import DocString from './step_arguments/doc_string'
@@ -6,7 +7,6 @@ import Status from '../status'
 import StepResult from './step_result'
 import Time from '../time'
 import UserCodeRunner from '../user_code_runner'
-import {CucumberExpression, RegularExpression} from 'cucumber-expressions'
 
 const {beginTiming, endTiming} = Time
 

@@ -1,8 +1,8 @@
-import ProfileLoader from './profile_loader'
-import tmp from 'tmp'
 import {promisify} from 'bluebird'
 import fs from 'mz/fs'
 import path from 'path'
+import ProfileLoader from './profile_loader'
+import tmp from 'tmp'
 
 describe('ProfileLoader', function() {
   describe('getArgv', function() {

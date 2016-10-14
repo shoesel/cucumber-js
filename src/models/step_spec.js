@@ -1,7 +1,7 @@
-import Step from './step'
 import DataTable from './step_arguments/data_table'
 import DocString from './step_arguments/doc_string'
 import KeywordType from '../keyword_type'
+import Step from './step'
 
 describe('Step', function () {
   beforeEach(function() {

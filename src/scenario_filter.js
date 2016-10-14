@@ -1,9 +1,9 @@
 import _ from 'lodash'
-import TagExpressionParser from 'cucumber-tag-expressions/lib/tag_expression_parser'
 import path from 'path'
+import TagExpressionParser from 'cucumber-tag-expressions/lib/tag_expression_parser'
 
-const tagExpressionParser = new TagExpressionParser()
 const FEATURE_LINENUM_REGEXP = /^(.*?)((?::[\d]+)+)?$/
+const tagExpressionParser = new TagExpressionParser()
 
 export default class ScenarioFilter {
   constructor({cwd, featurePaths, names, tagExpression}) {

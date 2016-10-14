@@ -3,8 +3,8 @@ import Duration from 'duration'
 import Formatter from './'
 import indentString from 'indent-string'
 import path from 'path'
-import Table from 'cli-table'
 import Status from '../../status'
+import Table from 'cli-table'
 
 export default class SummaryFormatter extends Formatter {
   constructor(options) {

@@ -1,5 +1,5 @@
-import SupportCodeLibraryBuilder from './support_code_library_builder'
 import {TransformLookup} from 'cucumber-expressions'
+import SupportCodeLibraryBuilder from './support_code_library_builder'
 
 describe('SupportCodeLibraryBuilder', function () {
   describe('no support code fns', function() {

@@ -1,7 +1,7 @@
 import Promise from 'bluebird'
+import Time from './time'
 import UncaughtExceptionManager from './uncaught_exception_manager'
 import util from 'util'
-import Time from './time'
 
 export default class UserCodeRunner {
   static async run ({argsArray, thisArg, fn, timeoutInMilliseconds}) {

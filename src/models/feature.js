@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import Tag from './tag'
 import Scenario from './scenario'
+import Tag from './tag'
 
 export default class Feature {
   constructor ({gherkinData, gherkinPickles, uri}) {

@@ -1,7 +1,7 @@
 import _ from 'lodash'
+import ArgvParser from './argv_parser'
 import fs from 'mz/fs'
 import path from 'path'
-import ArgvParser from './argv_parser'
 import PathExpander from './path_expander'
 import Promise from 'bluebird'
 

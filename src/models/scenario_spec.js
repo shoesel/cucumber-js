@@ -91,4 +91,18 @@ describe('Scenario', function () {
       expect(this.scenario.uri).to.eql('path1')
     })
   })
+
+  describe('steps', function () {
+    beforeEach(function() {
+      this.gherkinData.steps = [
+        {locations: [{}], text: 'step1'},
+        {locations: [{}], text: 'step2'}
+      ]
+      this.scenario = new Scenario(this.scenarioOptions)
+    })
+
+    it('returns the steps', function () {
+      expect(this.scenario.steps).to.have.lengthOf(2)
+    })
+  })
 })

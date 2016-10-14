@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import StepArguments from './step_arguments'
 import {getStepKeywordType} from '../keyword_type'
+import StepArguments from './step_arguments'
 
 export default class Step {
   constructor({gherkinData, language, lineToKeywordMapping, previousStep, scenario}) {

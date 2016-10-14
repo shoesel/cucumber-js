@@ -1,5 +1,5 @@
-import Status, {addStatusPredicates, getStatusMapping} from '../status'
 import Hook from './hook'
+import Status, {addStatusPredicates, getStatusMapping} from '../status'
 
 export default class ScenarioResult {
   constructor(scenario) {

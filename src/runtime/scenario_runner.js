@@ -5,7 +5,6 @@ import ScenarioResult from '../models/scenario_result'
 import Status from '../status'
 import StepResult from '../models/step_result'
 
-
 export default class ScenarioRunner {
   constructor({eventBroadcaster, options, scenario, supportCodeLibrary}) {
     this.eventBroadcaster = eventBroadcaster

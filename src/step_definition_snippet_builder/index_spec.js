@@ -1,7 +1,7 @@
-import KeywordType from '../keyword_type'
-import StepDefinitionSnippetBuilder from './'
 import DataTable from '../models/step_arguments/data_table'
 import DocString from '../models/step_arguments/doc_string'
+import KeywordType from '../keyword_type'
+import StepDefinitionSnippetBuilder from './'
 import TransformLookupBuilder from '../transform_lookup_builder'
 
 describe('StepDefinitionSnippetBuilder', function () {

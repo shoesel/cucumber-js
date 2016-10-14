@@ -1,6 +1,6 @@
-import StackTraceFilter from './stack_trace_filter'
-import FeaturesRunner from './features_runner'
 import EventBroadcaster from './event_broadcaster'
+import FeaturesRunner from './features_runner'
+import StackTraceFilter from './stack_trace_filter'
 
 export default class Runtime {
   // options - {dryRun, failFast, filterStacktraces, strict}
