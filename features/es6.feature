@@ -1,4 +1,3 @@
-@es6
 Feature: ES6 compatibility
   In order to use new JavaScript features
   As a developer
