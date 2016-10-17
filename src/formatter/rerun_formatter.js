@@ -3,7 +3,6 @@ import Formatter from './'
 import path from 'path'
 import Status from '../status'
 
-
 const RERUN_STATUSES = [
   Status.AMBIGUOUS,
   Status.FAILED,
@@ -11,13 +10,7 @@ const RERUN_STATUSES = [
   Status.UNDEFINED
 ]
 
-
 export default class RerunFormatter extends Formatter {
-  constructor(options) {
-    super(options)
-    this.scenarios = {}
-  }
-
   handleFeaturesResult(featuresResult) {
     const mapping = {}
     featuresResult.scenarioResults.forEach((scenarioResult) => {

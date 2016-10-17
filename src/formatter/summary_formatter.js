@@ -7,13 +7,16 @@ import Status from '../status'
 import Table from 'cli-table'
 import Hook from '../models/hook'
 
-export default class SummaryFormatter extends Formatter {
-  constructor(options) {
-    super(options)
-    this.failures = []
-    this.warnings = []
-  }
+const STATUS_REPORT_ORDER = [
+  Status.FAILED,
+  Status.AMBIGUOUS,
+  Status.UNDEFINED,
+  Status.PENDING,
+  Status.SKIPPED,
+  Status.PASSED
+]
 
+export default class SummaryFormatter extends Formatter {
   getAmbiguousStepResultMessage(stepResult) {
     const {ambiguousStepDefinitions} = stepResult
     const table = new Table({
@@ -91,7 +94,7 @@ export default class SummaryFormatter extends Formatter {
     let text = total + ' ' + type + (total !== 1 ? 's' : '')
     if (total > 0) {
       const details = []
-      SummaryFormatter.statusReportOrder.forEach((status) => {
+      STATUS_REPORT_ORDER.forEach((status) => {
         if (counts[status] > 0) {
           details.push(this.colorFns[status](counts[status] + ' ' + status))
         }
@@ -156,13 +159,3 @@ export default class SummaryFormatter extends Formatter {
     })
   }
 }
-
-
-SummaryFormatter.statusReportOrder = [
-  Status.FAILED,
-  Status.AMBIGUOUS,
-  Status.UNDEFINED,
-  Status.PENDING,
-  Status.SKIPPED,
-  Status.PASSED
-]
