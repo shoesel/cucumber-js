@@ -3,6 +3,7 @@ import DataTable from '../models/step_arguments/data_table'
 import DocString from '../models/step_arguments/doc_string'
 import Formatter from './'
 import Status from '../status'
+import util from 'util'
 
 export default class JsonFormatter extends Formatter {
   constructor(options) {
@@ -42,7 +43,7 @@ export default class JsonFormatter extends Formatter {
       } else if (arg instanceof DocString) {
         return this.formatDocString(arg)
       } else {
-        throw new Error('Unknown argument type:' + arg)
+        throw new Error(`Unknown argument type: ${util.inspect(arg)}`)
       }
     })
   }

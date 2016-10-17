@@ -79,7 +79,7 @@ describe('JsonFormatter', function () {
           this.jsonFormatter.handleAfterFeatures()
         })
 
-        it('outputs the feature and the scenario', function () {
+        it('outputs the scenario', function () {
           const features = JSON.parse(this.output)
           expect(features[0].elements).to.eql([{
             description: 'A Scenario Description',
@@ -208,7 +208,7 @@ describe('JsonFormatter', function () {
             this.jsonFormatter.handleAfterFeatures()
           })
 
-          it('outputs the step with a hidden attribute', function () {
+          it('outputs the data table as a step argument', function () {
             const features = JSON.parse(this.output)
             expect(features[0].elements[0].steps[0].arguments).to.eql([{
               rows: [
@@ -217,6 +217,18 @@ describe('JsonFormatter', function () {
                 {cells: ['c:1', 'c:2', 'c:3']}
               ]
             }])
+          })
+        })
+
+        describe('with an unknown argument type', function () {
+          beforeEach(function (){
+            this.step.arguments = [{some: 'data'}]
+          })
+
+          it('throws an arror', function () {
+            expect(() => {
+              this.jsonFormatter.handleStepResult(this.stepResult)
+            }).to.throw('Unknown argument type: { some: \'data\' }')
           })
         })
 
@@ -235,7 +247,7 @@ describe('JsonFormatter', function () {
             this.jsonFormatter.handleAfterFeatures({})
           })
 
-          it('outputs the step with a hidden attribute', function () {
+          it('outputs the step with embeddings', function () {
             const features = JSON.parse(this.output)
             expect(features[0].elements[0].steps[0].embeddings).to.eql([
               {data: 'first data', mime_type: 'first mime type'},
