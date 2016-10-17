@@ -1,5 +1,4 @@
-import Hook from './hook'
-import Status, {addStatusPredicates, getStatusMapping} from '../status'
+import Status, {addStatusPredicates} from '../status'
 
 export default class ScenarioResult {
   constructor(scenario) {
@@ -7,11 +6,11 @@ export default class ScenarioResult {
     this.failureException = null
     this.scenario = scenario
     this.status = Status.PASSED
-    this.stepCounts = getStatusMapping(0)
+    this.stepResults = []
   }
 
-  shouldUpdateStatus(stepStatus) {
-    switch (stepStatus) {
+  shouldUpdateStatus(stepResultStatus) {
+    switch (stepResultStatus) {
       case Status.FAILED:
         return true
       case Status.AMBIGUOUS:
@@ -25,19 +24,17 @@ export default class ScenarioResult {
   }
 
   witnessStepResult(stepResult) {
-    const {duration, failureException, status: stepStatus, step} = stepResult
+    const {duration, failureException, status} = stepResult
     if (duration) {
       this.duration += duration
     }
-    if (this.shouldUpdateStatus(stepStatus)) {
-      this.status = stepStatus
-    }
-    if (stepStatus === Status.FAILED) {
+    if (status === Status.FAILED) {
       this.failureException = failureException
     }
-    if (!(step instanceof Hook)) {
-      this.stepCounts[stepStatus] += 1
+    if (this.shouldUpdateStatus(status)) {
+      this.status = status
     }
+    this.stepResults.push(stepResult)
   }
 }
 

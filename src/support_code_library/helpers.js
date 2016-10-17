@@ -46,7 +46,7 @@ export function registerHandler(cwd, collection) {
     }
     _.assign(options, getDefinitionLineAndUri(), {cwd})
     const listener = new Listener(options)
-    listener.setHandlerForEventName(eventName, handler)
+    listener[`handle${eventName}`] = handler
     collection.push(listener)
   }
 }

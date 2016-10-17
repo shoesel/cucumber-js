@@ -1,12 +1,24 @@
-export function expectToHearEvents(hearStub, expectedEvents) {
-  expect(hearStub).to.have.callCount(expectedEvents.length)
+export function expectToHearEvents(listener, expectedEvents) {
+  let previousStub = null
+  let callNumberMapping = {}
   expectedEvents.forEach(function([expectedName, expectedData], index) {
-    const event = hearStub.args[index][0]
-    expect(event.name).to.eql(expectedName)
-    if (typeof expectedData === 'function') {
-      expectedData(event.data)
-    } else {
-      expect(event.data).to.eql(expectedData)
+    const fnName = 'handle' + expectedName
+    if (!callNumberMapping[fnName]) {
+      callNumberMapping[fnName] = 0
     }
+    const stub = listener[fnName].getCall(callNumberMapping[fnName])
+    callNumberMapping[fnName] += 1
+
+    const arg = stub.args[0]
+    if (typeof expectedData === 'function') {
+      expectedData(arg)
+    } else {
+      expect(arg).to.eql(expectedData)
+    }
+
+    if (previousStub) {
+      expect(stub).to.have.been.calledAfter(previousStub)
+    }
+    previousStub = stub
   })
 }

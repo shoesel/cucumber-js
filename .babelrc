@@ -2,16 +2,11 @@
   "plugins": [
     "transform-async-to-generator",
     "transform-function-bind",
+    ["transform-runtime", {"polyfill": false, "regenerator": true}]
   ],
   "presets": ["es2015"],
   "env": {
-    "production": {
-      "plugins": [
-        "transform-regenerator",
-        ["transform-runtime", {"polyfill": false, "regenerator": true}]
-      ]
-    },
-    "test": {
+    "test_coverage": {
       "plugins": [
         ["istanbul", {"exclude": ["test/*.js", "**/*_spec.js"]}]
       ]

@@ -1,5 +1,5 @@
 import getColorFns from './get_color_fns'
-import Status, {getStatusMapping} from '../status'
+import Status from '../status'
 import SummaryFormatter from './summary_formatter'
 
 describe('SummaryFormatter', function() {
@@ -10,8 +10,8 @@ describe('SummaryFormatter', function() {
     }
     const colorFns = getColorFns(false)
     this.featuresResult = {
-      scenarioCounts: getStatusMapping(0),
-      stepCounts: getStatusMapping(0),
+      scenarioResults: [],
+      stepResults: [],
       duration: 0
     }
     const snippetBuilder = createMock({build: 'snippet'})
@@ -52,7 +52,7 @@ describe('SummaryFormatter', function() {
           step: this.step,
           stepDefinition
         }
-        this.summaryFormatter.handleStepResult(stepResult)
+        this.featuresResult.stepResults = [stepResult]
         this.summaryFormatter.handleFeaturesResult(this.featuresResult)
       })
 
@@ -87,7 +87,7 @@ describe('SummaryFormatter', function() {
           status: Status.AMBIGUOUS,
           step: this.step
         }
-        this.summaryFormatter.handleStepResult(stepResult)
+        this.featuresResult.stepResults = [stepResult]
         this.summaryFormatter.handleFeaturesResult(this.featuresResult)
       })
 
@@ -112,7 +112,7 @@ describe('SummaryFormatter', function() {
           status: Status.UNDEFINED,
           step: this.step
         }
-        this.summaryFormatter.handleStepResult(stepResult)
+        this.featuresResult.stepResults = [stepResult]
         this.summaryFormatter.handleFeaturesResult(this.featuresResult)
       })
 
@@ -137,7 +137,7 @@ describe('SummaryFormatter', function() {
           status: Status.PENDING,
           step: this.step
         }
-        this.summaryFormatter.handleStepResult(stepResult)
+        this.featuresResult.stepResults = [stepResult]
         this.summaryFormatter.handleFeaturesResult(this.featuresResult)
       })
 
@@ -171,7 +171,8 @@ describe('SummaryFormatter', function() {
 
     describe('with one passing scenario', function() {
       beforeEach(function() {
-        this.featuresResult.scenarioCounts[Status.PASSED] = 1
+        const scenarioResult = {status: Status.PASSED}
+        this.featuresResult.scenarioResults = [scenarioResult]
         this.summaryFormatter.handleFeaturesResult(this.featuresResult)
       })
 
@@ -186,7 +187,14 @@ describe('SummaryFormatter', function() {
 
     describe('with one of every kind of scenario', function() {
       beforeEach(function() {
-        this.featuresResult.scenarioCounts = getStatusMapping(1)
+        this.featuresResult.scenarioResults = [
+          {status: Status.AMBIGUOUS},
+          {status: Status.FAILED},
+          {status: Status.PASSED},
+          {status: Status.PENDING},
+          {status: Status.SKIPPED},
+          {status: Status.UNDEFINED}
+        ]
         this.summaryFormatter.handleFeaturesResult(this.featuresResult)
       })
 
@@ -201,7 +209,7 @@ describe('SummaryFormatter', function() {
 
     describe('with one passing step', function() {
       beforeEach(function() {
-        this.featuresResult.stepCounts[Status.PASSED] = 1
+        this.featuresResult.stepResults = [{status: Status.PASSED}]
         this.summaryFormatter.handleFeaturesResult(this.featuresResult)
       })
 
@@ -216,7 +224,14 @@ describe('SummaryFormatter', function() {
 
     describe('with one of every kind of setp', function() {
       beforeEach(function() {
-        this.featuresResult.stepCounts = getStatusMapping(1)
+        this.featuresResult.stepResults = [
+          {ambiguousStepDefinitions: [], status: Status.AMBIGUOUS, step: {}},
+          {failureException: {}, status: Status.FAILED, step: {}},
+          {status: Status.PASSED, step: {}},
+          {status: Status.PENDING, step: {}},
+          {status: Status.SKIPPED, step: {}},
+          {status: Status.UNDEFINED, step: {}}
+        ]
         this.summaryFormatter.handleFeaturesResult(this.featuresResult)
       })
 

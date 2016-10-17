@@ -1,10 +1,11 @@
 import _ from 'lodash'
+import {formatLocation} from './utils'
 import Duration from 'duration'
 import Formatter from './'
 import indentString from 'indent-string'
-import path from 'path'
 import Status from '../status'
 import Table from 'cli-table'
+import Hook from '../models/hook'
 
 export default class SummaryFormatter extends Formatter {
   constructor(options) {
@@ -13,45 +14,80 @@ export default class SummaryFormatter extends Formatter {
     this.warnings = []
   }
 
-  handleFeaturesResult(featuresResult) {
-    if (this.failures.length > 0) {
-      this.logIssues({issues: this.failures, title: 'Failures'})
-    }
-    if (this.warnings.length > 0) {
-      this.logIssues({issues: this.warnings, title: 'Warnings'})
-    }
-    this.logCountSummary('scenario', featuresResult.scenarioCounts)
-    this.logCountSummary('step', featuresResult.stepCounts)
-    this.logDuration(featuresResult)
+  getAmbiguousStepResultMessage(stepResult) {
+    const {ambiguousStepDefinitions} = stepResult
+    const table = new Table({
+      chars: {
+        'bottom': '', 'bottom-left': '', 'bottom-mid': '', 'bottom-right': '',
+        'left': '', 'left-mid': '',
+        'mid': '', 'mid-mid': '', 'middle': ' - ',
+        'right': '', 'right-mid': '',
+        'top': '' , 'top-left': '', 'top-mid': '', 'top-right': ''
+      },
+      style: {
+        border: [], 'padding-left': 0, 'padding-right': 0
+      }
+    })
+    table.push.apply(table, ambiguousStepDefinitions.map((stepDefinition) => {
+      const pattern = stepDefinition.pattern.toString()
+      return [pattern, formatLocation(this.cwd, stepDefinition)]
+    }))
+    return 'Multiple step definitions match:' + '\n' + this.indent(table.toString(), 2)
   }
 
-  handleStepResult(stepResult) {
+  getFailedStepResultMessage(stepResult) {
+    const {failureException} = stepResult
+    return failureException.stack || failureException
+  }
+
+  getPendingStepResultMessage() {
+    return 'Pending'
+  }
+
+  getStepResultMessage(stepResult) {
     switch (stepResult.status) {
       case Status.AMBIGUOUS:
-        this.storeAmbiguousStepResult(stepResult)
-        break
+        return this.getAmbiguousStepResultMessage(stepResult)
       case Status.FAILED:
-        this.storeFailedStepResult(stepResult)
-        break
+        return this.getFailedStepResultMessage(stepResult)
       case Status.UNDEFINED:
-        this.storeUndefinedStepResult(stepResult)
-        break
+        return this.getUndefinedStepResultMessage(stepResult)
       case Status.PENDING:
-        this.storePendingStepResult(stepResult)
-        break
+        return this.getPendingStepResultMessage(stepResult)
     }
   }
 
-  formatLocation(obj) {
-    return path.relative(this.cwd, obj.uri) + ':' + obj.line
+  getUndefinedStepResultMessage(stepResult) {
+    const {step} = stepResult
+    const snippet = this.snippetBuilder.build(step)
+    return 'Undefined. Implement with the following snippet:' + '\n\n' + this.indent(snippet, 2)
+  }
+
+  handleFeaturesResult(featuresResult) {
+    const failures = featuresResult.stepResults.filter(function (stepResult) {
+      return _.includes([Status.AMBIGUOUS, Status.FAILED], stepResult.status)
+    })
+    if (failures.length > 0) {
+      this.logIssues({stepResults: failures, title: 'Failures'})
+    }
+    const warnings = featuresResult.stepResults.filter(function (stepResult) {
+      return _.includes([Status.PENDING, Status.UNDEFINED], stepResult.status)
+    })
+    if (warnings.length > 0) {
+      this.logIssues({stepResults: warnings, title: 'Warnings'})
+    }
+    this.logCountSummary('scenario', featuresResult.scenarioResults)
+    this.logCountSummary('step', featuresResult.stepResults.filter(({step}) => !(step instanceof Hook)))
+    this.logDuration(featuresResult)
   }
 
   indent(text, numberOfSpaces) {
     return indentString(text, ' ', numberOfSpaces)
   }
 
-  logCountSummary(type, counts) {
-    const total = _.reduce(counts, (memo, value) => memo + value)
+  logCountSummary(type, objects) {
+    const counts = _.chain(objects).groupBy('status').mapValues('length').value()
+    const total = _.reduce(counts, (memo, value) => memo + value) || 0
     let text = total + ' ' + type + (total !== 1 ? 's' : '')
     if (total > 0) {
       const details = []
@@ -78,14 +114,15 @@ export default class SummaryFormatter extends Formatter {
     )
   }
 
-  logIssue({message, number, stepResult}) {
+  logIssue({number, stepResult}) {
+    const message = this.getStepResultMessage(stepResult)
     const prefix = number + ') '
     const {step} = stepResult
     const {scenario} = step
     let text = prefix
 
     if (scenario) {
-      const scenarioLocation = this.formatLocation(scenario)
+      const scenarioLocation = formatLocation(this.cwd, scenario)
       text += 'Scenario: ' + this.colorFns.bold(scenario.name) + ' - ' + this.colorFns.location(scenarioLocation)
     } else {
       text += 'Background:'
@@ -94,14 +131,14 @@ export default class SummaryFormatter extends Formatter {
 
     let stepText = 'Step: ' + this.colorFns.bold(step.keyword + (step.name || ''))
     if (step.uri) {
-      const stepLocation = this.formatLocation(step)
+      const stepLocation = formatLocation(this.cwd, step)
       stepText += ' - ' + this.colorFns.location(stepLocation)
     }
     text += this.indent(stepText, prefix.length) + '\n'
 
     const {stepDefinition} = stepResult
     if (stepDefinition) {
-      const stepDefinitionLocation = this.formatLocation(stepDefinition)
+      const stepDefinitionLocation = formatLocation(this.cwd, stepDefinition)
       const stepDefinitionLine = 'Step Definition: ' + this.colorFns.location(stepDefinitionLocation)
       text += this.indent(stepDefinitionLine, prefix.length) + '\n'
     }
@@ -112,53 +149,11 @@ export default class SummaryFormatter extends Formatter {
     this.log(text)
   }
 
-  logIssues({issues, title}) {
+  logIssues({stepResults, title}) {
     this.log(title + ':\n\n')
-    issues.forEach(({message, stepResult}, index) => {
-      this.logIssue({message, number: index + 1, stepResult})
+    stepResults.forEach((stepResult, index) => {
+      this.logIssue({number: index + 1, stepResult})
     })
-  }
-
-  storeAmbiguousStepResult(stepResult) {
-    const {ambiguousStepDefinitions} = stepResult
-    const table = new Table({
-      chars: {
-        'bottom': '', 'bottom-left': '', 'bottom-mid': '', 'bottom-right': '',
-        'left': '', 'left-mid': '',
-        'mid': '', 'mid-mid': '', 'middle': ' - ',
-        'right': '', 'right-mid': '',
-        'top': '' , 'top-left': '', 'top-mid': '', 'top-right': ''
-      },
-      style: {
-        border: [], 'padding-left': 0, 'padding-right': 0
-      }
-    })
-    table.push.apply(table, ambiguousStepDefinitions.map((stepDefinition) => {
-      const pattern = stepDefinition.pattern.toString()
-      const relativeUri = path.relative(this.cwd, stepDefinition.uri)
-      const line = stepDefinition.line
-      return [pattern, relativeUri + ':' + line]
-    }))
-    const message = 'Multiple step definitions match:' + '\n' + this.indent(table.toString(), 2)
-    this.failures.push({message, stepResult})
-  }
-
-  storeFailedStepResult(stepResult) {
-    const {failureException} = stepResult
-    const message = failureException.stack || failureException
-    this.failures.push({message, stepResult})
-  }
-
-  storePendingStepResult(stepResult) {
-    const message = 'Pending'
-    this.warnings.push({message, stepResult})
-  }
-
-  storeUndefinedStepResult(stepResult) {
-    const {step} = stepResult
-    const snippet = this.snippetBuilder.build(step)
-    const message = 'Undefined. Implement with the following snippet:' + '\n\n' + this.indent(snippet, 2)
-    this.warnings.push({message, stepResult})
   }
 }
 

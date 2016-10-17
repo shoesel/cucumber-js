@@ -22,7 +22,8 @@ describe('RerunFormatter', function() {
 
   describe('with no scenarios', function() {
     beforeEach(function() {
-      this.rerunFormatter.handleAfterFeatures()
+      const featuresResult = {scenarioResults: []}
+      this.rerunFormatter.handleFeaturesResult(featuresResult)
     })
 
     it('outputs nothing', function() {
@@ -34,8 +35,8 @@ describe('RerunFormatter', function() {
     describe('with one ' + status + ' scenario', function() {
       beforeEach(function() {
         const scenarioResult = {status}
-        this.rerunFormatter.handleScenarioResult(scenarioResult)
-        this.rerunFormatter.handleAfterFeatures()
+        const featuresResult = {scenarioResults: [scenarioResult]}
+        this.rerunFormatter.handleFeaturesResult(featuresResult)
       })
 
       it('outputs nothing', function() {
@@ -55,8 +56,8 @@ describe('RerunFormatter', function() {
           scenario,
           status
         }
-        this.rerunFormatter.handleScenarioResult(scenarioResult)
-        this.rerunFormatter.handleAfterFeatures()
+        const featuresResult = {scenarioResults: [scenarioResult]}
+        this.rerunFormatter.handleFeaturesResult(featuresResult)
       })
 
       it('outputs the reference needed to run the scenario again', function() {
@@ -75,7 +76,6 @@ describe('RerunFormatter', function() {
         scenario: scenario1,
         status: Status.FAILED
       }
-      this.rerunFormatter.handleScenarioResult(scenarioResult1)
       const scenario2 = {
         line: 2,
         uri: this.feature1Path
@@ -84,8 +84,8 @@ describe('RerunFormatter', function() {
         scenario: scenario2,
         status: Status.FAILED
       }
-      this.rerunFormatter.handleScenarioResult(scenarioResult2)
-      this.rerunFormatter.handleAfterFeatures()
+      const featuresResult = {scenarioResults: [scenarioResult1, scenarioResult2]}
+      this.rerunFormatter.handleFeaturesResult(featuresResult)
     })
 
     it('outputs the reference needed to run the scenarios again', function() {
@@ -103,7 +103,6 @@ describe('RerunFormatter', function() {
         scenario: scenario1,
         status: Status.FAILED
       }
-      this.rerunFormatter.handleScenarioResult(scenarioResult1)
       const scenario2 = {
         line: 2,
         uri: this.feature2Path
@@ -112,8 +111,8 @@ describe('RerunFormatter', function() {
         scenario: scenario2,
         status: Status.FAILED
       }
-      this.rerunFormatter.handleScenarioResult(scenarioResult2)
-      this.rerunFormatter.handleAfterFeatures()
+      const featuresResult = {scenarioResults: [scenarioResult1, scenarioResult2]}
+      this.rerunFormatter.handleFeaturesResult(featuresResult)
     })
 
     it('outputs the references needed to run the scenarios again', function() {

@@ -6,7 +6,6 @@ import getColorFns from './get_color_fns'
 import PrettyFormatter from './pretty_formatter'
 import Status from '../status'
 import Step from '../models/step'
-import SummaryFormatter from './summary_formatter'
 
 describe('PrettyFormatter', function() {
   beforeEach(function() {
@@ -19,11 +18,6 @@ describe('PrettyFormatter', function() {
       colorFns,
       log: logFn
     })
-    sinon.stub(SummaryFormatter.prototype, 'handleStepResult')
-  })
-
-  afterEach(function() {
-    SummaryFormatter.prototype.handleStepResult.restore()
   })
 
   describe('before feature', function() {

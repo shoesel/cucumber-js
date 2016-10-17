@@ -16,12 +16,10 @@ describe('ProgressFormatter', function() {
       colorFns,
       log: logFn
     })
-    sinon.stub(SummaryFormatter.prototype, 'handleStepResult')
     sinon.stub(SummaryFormatter.prototype, 'handleFeaturesResult')
   })
 
   afterEach(function() {
-    SummaryFormatter.prototype.handleStepResult.restore()
     SummaryFormatter.prototype.handleFeaturesResult.restore()
   })
 
@@ -151,21 +149,6 @@ describe('ProgressFormatter', function() {
         it('outputs U', function() {
           expect(this.output).to.eql('U')
         })
-      })
-    })
-
-    describe('summary formatter', function() {
-      beforeEach(function() {
-        this.stepResult = {
-          status: Status.PASSED,
-          step: Object.create(Step.prototype)
-        }
-        this.progressFormatter.handleStepResult(this.stepResult)
-      })
-
-      it('handleStepResult is also called', function() {
-        expect(SummaryFormatter.prototype.handleStepResult).to.have.been.calledOnce
-        expect(SummaryFormatter.prototype.handleStepResult).to.have.been.calledWith(this.stepResult)
       })
     })
   })

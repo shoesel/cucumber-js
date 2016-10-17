@@ -9,7 +9,6 @@ export default class ProgressFormatter extends SummaryFormatter {
       const character = this.colorFns[status](ProgressFormatter.CHARACTERS[status])
       this.log(character)
     }
-    super.handleStepResult(stepResult)
   }
 
   handleFeaturesResult(featuresResult) {

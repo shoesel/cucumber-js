@@ -19,7 +19,7 @@ export default class FeaturesRunner {
       await Promise.each(this.features, ::this.runFeature)
       await this.broadcastFeaturesResult()
     })
-    return this.featuresResult.isSuccessful()
+    return this.featuresResult.success
   }
 
   async broadcastFeaturesResult() {
@@ -28,7 +28,7 @@ export default class FeaturesRunner {
   }
 
   async runFeature(feature) {
-    if (!this.featuresResult.isSuccessful() && this.options.failFast) {
+    if (!this.featuresResult.success && this.options.failFast) {
       return
     }
     const event = new Event({data: feature, name: Event.FEATURE_EVENT_NAME})
@@ -38,7 +38,7 @@ export default class FeaturesRunner {
   }
 
   async runScenario(scenario) {
-    if (!this.featuresResult.isSuccessful() && this.options.failFast) {
+    if (!this.featuresResult.success && this.options.failFast) {
       return
     }
     if (!this.scenarioFilter.matches(scenario)) {

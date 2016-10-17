@@ -7,7 +7,13 @@ import Status from '../status'
 
 describe('FeaturesRunner', function () {
   beforeEach(function () {
-    this.listener = createMock(['hear'])
+    this.listener = createMock([
+      'handleBeforeFeatures',
+      'handleBeforeFeature',
+      'handleAfterFeature',
+      'handleFeaturesResult',
+      'handleAfterFeatures'
+    ])
     this.eventBroadcaster = new EventBroadcaster({listeners: [this.listener]})
     this.features = []
     this.supportCodeLibrary = {
@@ -40,10 +46,10 @@ describe('FeaturesRunner', function () {
       })
 
       it('broadcasts features and featureResult events', function() {
-        expectToHearEvents(this.listener.hear, [
+        expectToHearEvents(this.listener, [
           ['BeforeFeatures', this.features],
           ['FeaturesResult', function(featureResult) {
-            expect(featureResult.isSuccessful()).to.be.true
+            expect(featureResult.success).to.be.true
           }],
           ['AfterFeatures', this.features]
         ])
@@ -70,12 +76,12 @@ describe('FeaturesRunner', function () {
       })
 
       it('broadcasts a features, feature and featuresResult event', function() {
-        expectToHearEvents(this.listener.hear, [
+        expectToHearEvents(this.listener, [
           ['BeforeFeatures', this.features],
           ['BeforeFeature', this.feature],
           ['AfterFeature', this.feature],
           ['FeaturesResult', function(featureResult) {
-            expect(featureResult.isSuccessful()).to.be.true
+            expect(featureResult.success).to.be.true
           }],
           ['AfterFeatures', this.features]
         ])
@@ -102,12 +108,12 @@ describe('FeaturesRunner', function () {
       })
 
       it('broadcasts a features, feature and featuresResult event', function() {
-        expectToHearEvents(this.listener.hear, [
+        expectToHearEvents(this.listener, [
           ['BeforeFeatures', this.features],
           ['BeforeFeature', this.feature],
           ['AfterFeature', this.feature],
           ['FeaturesResult', function(featureResult) {
-            expect(featureResult.isSuccessful()).to.be.false
+            expect(featureResult.success).to.be.false
           }],
           ['AfterFeatures', this.features]
         ])

@@ -8,7 +8,14 @@ import StepRunner from './step_runner'
 
 describe('ScenarioRunner', function () {
   beforeEach(function () {
-    this.listener = createMock(['hear'])
+    this.listener = createMock([
+      'handleBeforeScenario',
+      'handleBeforeStep',
+      'handleStepResult',
+      'handleAfterStep',
+      'handleScenarioResult',
+      'handleAfterScenario'
+    ])
     this.eventBroadcaster = new EventBroadcaster({listeners: [this.listener]})
     this.scenario = createMock({
       getFeature: null,
@@ -44,7 +51,7 @@ describe('ScenarioRunner', function () {
       })
 
       it('broadcasts a scenario event', function() {
-        expectToHearEvents(this.listener.hear, [
+        expectToHearEvents(this.listener, [
           ['BeforeScenario', this.scenario],
           ['ScenarioResult', this.scenarioResult],
           ['AfterScenario', this.scenario]
@@ -72,7 +79,7 @@ describe('ScenarioRunner', function () {
       })
 
       it('broadcasts a scenario, step, stepResult and scenarioResult event', function() {
-        expectToHearEvents(this.listener.hear, [
+        expectToHearEvents(this.listener, [
           ['BeforeScenario', this.scenario],
           ['BeforeStep', this.step],
           ['StepResult', this.stepResult],
@@ -103,7 +110,7 @@ describe('ScenarioRunner', function () {
       })
 
       it('broadcasts a scenario, step and stepResult event', function() {
-        expectToHearEvents(this.listener.hear, [
+        expectToHearEvents(this.listener, [
           ['BeforeScenario', this.scenario],
           ['BeforeStep', this.step],
           ['StepResult', this.stepResult],
@@ -128,7 +135,7 @@ describe('ScenarioRunner', function () {
       })
 
       it('broadcasts the expected events', function() {
-        expectToHearEvents(this.listener.hear, [
+        expectToHearEvents(this.listener, [
           ['BeforeScenario', this.scenario],
           ['BeforeStep', this.step],
           ['StepResult', function(stepResult) {
@@ -153,7 +160,7 @@ describe('ScenarioRunner', function () {
       })
 
       it('broadcasts the expected events', function() {
-        expectToHearEvents(this.listener.hear, [
+        expectToHearEvents(this.listener, [
           ['BeforeScenario', this.scenario],
           ['BeforeStep', this.step],
           ['StepResult', function(stepResult) {
@@ -181,7 +188,7 @@ describe('ScenarioRunner', function () {
       })
 
       it('broadcasts the expected events', function() {
-        expectToHearEvents(this.listener.hear, [
+        expectToHearEvents(this.listener, [
           ['BeforeScenario', this.scenario],
           ['BeforeStep', this.step],
           ['StepResult', function(stepResult) {
@@ -214,7 +221,7 @@ describe('ScenarioRunner', function () {
       })
 
       it('broadcasts the expected events', function() {
-        expectToHearEvents(this.listener.hear, [
+        expectToHearEvents(this.listener, [
           ['BeforeScenario', this.scenario],
           ['BeforeStep', function(step) {
             expect(step.keyword).to.eql('Before ')
@@ -256,7 +263,7 @@ describe('ScenarioRunner', function () {
       })
 
       it('broadcasts the expected events', function() {
-        expectToHearEvents(this.listener.hear, [
+        expectToHearEvents(this.listener, [
           ['BeforeScenario', this.scenario],
           ['BeforeStep', this.step],
           ['StepResult', function(stepResult) {

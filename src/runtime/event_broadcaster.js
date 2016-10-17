@@ -1,7 +1,10 @@
+import path from 'path'
 import Promise from 'bluebird'
+import UserCodeRunner from '../user_code_runner'
 
 export default class EventBroadcaster {
-  constructor({listenerDefaultTimeout, listeners}) {
+  constructor({cwd, listenerDefaultTimeout, listeners}) {
+    this.cwd = cwd
     this.listenerDefaultTimeout = listenerDefaultTimeout
     this.listeners = listeners
   }
@@ -14,7 +17,31 @@ export default class EventBroadcaster {
 
   async broadcastEvent(event) {
     await Promise.each(this.listeners, async(listener) => {
-      await listener.hear(event, this.listenerDefaultTimeout)
+      const handler = listener['handle' + event.name]
+      if (handler) {
+        const timeout = listener.timeout || this.listenerDefaultTimeout
+        const {error} = await UserCodeRunner.run({
+          argsArray: [event.data],
+          fn: handler,
+          timeoutInMilliseconds: timeout,
+          thisArg: listener
+        })
+        if (error) {
+          throw this.prependLocationToError(error, listener)
+        }
+      }
     })
+  }
+
+  prependLocationToError(error, listener) {
+    if (listener.cwd && listener.uri) {
+      const ref = path.relative(listener.cwd, listener.uri) + ':' + listener.line
+      if (error instanceof Error) {
+        error.message = ref + ' ' + error.message
+      } else {
+        error = ref + ' ' + error
+      }
+    }
+    return error
   }
 }
