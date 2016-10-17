@@ -17,7 +17,8 @@ export default class EventBroadcaster {
 
   async broadcastEvent(event) {
     await Promise.each(this.listeners, async(listener) => {
-      const handler = listener['handle' + event.name]
+      const fnName = `handle${event.name}`
+      const handler = listener[fnName]
       if (handler) {
         const timeout = listener.timeout || this.listenerDefaultTimeout
         const {error} = await UserCodeRunner.run({
@@ -27,20 +28,26 @@ export default class EventBroadcaster {
           thisArg: listener
         })
         if (error) {
-          throw this.prependLocationToError(error, listener)
+          const location = this.getListenerErrorLocation({fnName, listener})
+          throw this.prependLocationToError({error, location})
         }
       }
     })
   }
 
-  prependLocationToError(error, listener) {
+  getListenerErrorLocation({fnName, listener}) {
     if (listener.cwd && listener.uri) {
-      const ref = path.relative(listener.cwd, listener.uri) + ':' + listener.line
-      if (error instanceof Error) {
-        error.message = ref + ' ' + error.message
-      } else {
-        error = ref + ' ' + error
-      }
+      return path.relative(listener.cwd, listener.uri) + ':' + listener.line
+    } else {
+      return `${listener.constructor.name}::${fnName}`
+    }
+  }
+
+  prependLocationToError({error, location}) {
+    if (error instanceof Error) {
+      error.message = location + ' ' + error.message
+    } else {
+      error = location + ' ' + error
     }
     return error
   }
