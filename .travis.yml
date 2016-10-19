@@ -22,8 +22,8 @@ matrix:
     - node_js: "4"
       script: "npm run feature-test"
     - node_js: "0.12"
-      script: "npm run feature-test"
+      script: "npm run feature-test-es5"
     - node_js: "0.10"
-      script: "npm run feature-test"
+      script: "npm run feature-test-es5"
 
 sudo: false

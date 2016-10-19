@@ -8,7 +8,7 @@ environment:
     - nodejs_version: '4'
       test_script: 'feature-test'
     - nodejs_version: '0.12'
-      test_script: 'feature-test'
+      test_script: 'feature-test-es5'
 
 install:
   - ps: Install-Product node $env:nodejs_version

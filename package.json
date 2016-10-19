@@ -106,7 +106,7 @@
   },
   "main": "./lib/index",
   "engines": {
-    "node": ">=4"
+    "node": ">=0.10"
   },
   "dependencies": {
     "babel-runtime": "^6.11.6",
@@ -163,6 +163,7 @@
     "build-release": "babel src -o dist/cucumber.js --ignore '**/*_spec.js' --retain-lines --source-maps inline",
     "coverage": "BABEL_ENV=test_coverage nyc mocha src",
     "feature-test": "node ./bin/cucumber.js",
+    "feature-test-es5": "node ./bin/cucumber.js -p es5",
     "lint": "eslint src/**",
     "prefeature-test": "npm run build-local",
     "prepublish": "npm run build-local && npm run build-release",
