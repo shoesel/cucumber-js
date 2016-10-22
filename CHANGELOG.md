@@ -1,10 +1,9 @@
 ### [master (unreleased)](https://github.com/cucumber/cucumber-js/compare/v1.3.0...master)
 
-### [2.0.0](https://github.com/cucumber/cucumber-js/compare/v1.3.0...v2.0.0) (2016-10-01)
+### [2.0.0](https://github.com/cucumber/cucumber-js/compare/v1.3.1...v2.0.0) (2016-10-01)
 
 #### Breaking Changes
 
-* Drop support for Node 0.10 (LTS ends 2016-10-31) and Node 0.12 (LTS ends 2016-12-31)
 * CLI
   * `--colors / --no-colors` has moved to `--format-options '{"colorsEnabled": "<BOOLEAN>"}'`
   * `--require <DIR|FILE>`: the required files are no longer reordered to require anything in a `support` directory first
