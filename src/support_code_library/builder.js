@@ -15,7 +15,7 @@ function build({cwd, fns}) {
     stepDefinitions: [],
     transformLookup: TransformLookupBuilder.build()
   }
-  let generatorFunctionWrapper = null
+  let definitionFunctionWrapper = null
   const fnContext = {
     addTransform({captureGroupRegexps, transformer, typeName}) {
       const transform = new Transform(
@@ -36,8 +36,8 @@ function build({cwd, fns}) {
     setDefaultTimeout(milliseconds) {
       options.defaultTimeout = milliseconds
     },
-    setGeneratorFunctionWrapper(fn) {
-      generatorFunctionWrapper = fn
+    setDefinitionFunctionWrapper(fn) {
+      definitionFunctionWrapper = fn
     },
     World(parameters) {
       this.parameters = parameters
@@ -45,40 +45,45 @@ function build({cwd, fns}) {
   }
   fnContext.Given = fnContext.When = fnContext.Then = fnContext.defineStep
   fns.forEach((fn) => fn.call(fnContext))
-  wrapGeneratorFunctions({
+  wrapDefinitions({
     cwd,
+    definitionFunctionWrapper,
     definitions: _.chain(['afterHook', 'beforeHook', 'step'])
       .map((key) => options[key + 'Definitions'])
       .flatten()
-      .value(),
-    generatorFunctionWrapper
+      .value()
   })
   options.World = fnContext.World
   return options
 }
 
-export function wrapGeneratorFunctions({cwd, definitions, generatorFunctionWrapper}) {
-  const definitionsToWrap = _.filter(definitions, (definition) => {
-    return isGenerator.fn(definition.code)
-  })
-  if (definitionsToWrap.length > 0 && !generatorFunctionWrapper) {
-    const references = definitionsToWrap.map((definition) => {
-      return path.relative(cwd, definition.uri) + ':' + definition.line
-    }).join('\n  ')
-    const message = `
-      The following hook/step definitions use generator functions:
+export function wrapDefinitions({cwd, definitionFunctionWrapper, definitions}) {
+  if (definitionFunctionWrapper) {
+    definitions.forEach((definition) => {
+      const codeLength = definition.code.length
+      const wrappedFn = definitionFunctionWrapper(definition.code)
+      if (wrappedFn !== definition.code) {
+        definition.code = arity(codeLength, wrappedFn)
+      }
+    })
+  } else {
+    const generatorDefinitions = _.filter(definitions, (definition) => {
+      return isGenerator.fn(definition.code)
+    })
+    if (generatorDefinitions.length > 0) {
+      const references = generatorDefinitions.map((definition) => {
+        return path.relative(cwd, definition.uri) + ':' + definition.line
+      }).join('\n  ')
+      const message = `
+        The following hook/step definitions use generator functions:
 
-        ${references}
+          ${references}
 
-      Use 'this.setGeneratorFunctionWrapper(fn)' to configure how to wrap them.
-      `
-    throw new Error(message)
+        Use 'this.setDefinitionFunctionWrapper(fn)' to wrap then in a function that returns a promise.
+        `
+      throw new Error(message)
+    }
   }
-  definitionsToWrap.forEach((definition) => {
-    const codeLength = definition.code.length
-    const wrappedFn = generatorFunctionWrapper(definition.code)
-    definition.code = arity(codeLength, wrappedFn)
-  })
 }
 
 export default {build}

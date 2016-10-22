@@ -41,16 +41,23 @@ Feature: ES6 compatibility
 
         features/step_definitions/cucumber_steps.js:8
 
-      Use 'this.setGeneratorFunctionWrapper(fn)' to configure how to wrap them.
+      Use 'this.setDefinitionFunctionWrapper(fn)' to wrap then in a function that returns a promise
       """
 
   Scenario: with generator function wrapper
     Given a file named "features/support/setup.js" with:
       """
+      var isGenerator = require('is-generator');
       var Promise = require('bluebird');
 
-      module.exports = function() {
-        this.setGeneratorFunctionWrapper(Promise.coroutine);
+      module.exports = function () {
+        this.setDefinitionFunctionWrapper(function (fn) {
+          if (isGenerator.fn(fn)) {
+            return Promise.coroutine(fn);
+          } else {
+            return fn;
+          }
+        });
       };
       """
     When I run cucumber-js with `--strict`
