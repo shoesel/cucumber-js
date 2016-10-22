@@ -47,7 +47,6 @@ If you would like to wrap step or hook definitions in with some additional logic
 var mzFs = require('mz/fs');
 
 module.exports = function () {
-  // Asynchronous - generator
   this.Then(/^Then the file named (.*) is empty$/, function *(fileName) {
     contents = yield mzFs.readFile(fileName, 'utf8');
     assert.equal(contents, '');

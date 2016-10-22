@@ -70,7 +70,7 @@
 
 * Support Files
   * Attachments:
-    * When attaching a stream, the interface can either accept a callback as a third argument or will return a promise.
+    * When attaching a stream, the interface can either accept a callback as a third argument or will return a promise if not passed a callback
   * Step Definitions
     * Ability to add custom argument transformations
 
