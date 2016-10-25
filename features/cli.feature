@@ -108,6 +108,134 @@ Feature: Command line interface
       """
     And the exit status should be 0
 
+  Scenario: run only one part of a test suite
+    Given a file named "features/a.feature" with:
+      """
+      Feature: feature1
+        Scenario:
+          When a step is passing
+      """
+    And a file named "features/b.feature" with:
+      """
+      Feature: feature2
+        Scenario:
+          When a step is passing
+      """
+    And a file named "features/c.feature" with:
+      """
+      Feature: feature3
+        Scenario:
+          When a step is passing
+      """
+    And a file named "features/d.feature" with:
+      """
+      Feature: feature4
+        Scenario:
+          When a step is passing
+      """
+    And a file named "features/e.feature" with:
+      """
+      Feature: feature5
+        Scenario:
+          When a step is passing
+      """
+    And a file named "features/step_definitions/cucumber_steps.js" with:
+      """
+      var cucumberSteps = function() {
+        this.When(/^a step is passing$/, function(callback) { callback(); });
+      };
+      module.exports = cucumberSteps;
+      """
+    When I run cucumber.js with `--part 2/3 -f pretty`
+    Then the output contains the text:
+      """
+      feature2
+      """
+    And the output contains the text:
+      """
+      feature5
+      """
+    And the output contains the text:
+      """
+      2 passed
+      """
+    And the exit status should be 0
+
+  Scenario: cover all scenarios of a test suite by partitioning
+    Given a file named "features/a.feature" with:
+      """
+      Feature: feature1
+        Scenario:
+          When a step is passing
+      """
+    And a file named "features/b.feature" with:
+      """
+      Feature: feature2
+        Scenario:
+          When a step is passing
+      """
+    And a file named "features/c.feature" with:
+      """
+      Feature: feature3
+        Scenario:
+          When a step is passing
+      """
+    And a file named "features/d.feature" with:
+      """
+      Feature: feature4
+        Scenario:
+          When a step is passing
+      """
+    And a file named "features/e.feature" with:
+      """
+      Feature: feature5
+        Scenario:
+          When a step is passing
+      """
+    And a file named "features/step_definitions/cucumber_steps.js" with:
+      """
+      var cucumberSteps = function() {
+        this.When(/^a step is passing$/, function(callback) { callback(); });
+      };
+      module.exports = cucumberSteps;
+      """
+    When I run cucumber.js with `--part 1/3 -f pretty`
+    Then the output contains the text:
+      """
+      feature1
+      """
+    And the output contains the text:
+      """
+      feature4
+      """
+    And the output contains the text:
+      """
+      2 passed
+      """
+    When I run cucumber.js with `--part 2/3 -f pretty`
+    Then the output contains the text:
+      """
+      feature2
+      """
+    And the output contains the text:
+      """
+      feature5
+      """
+    And the output contains the text:
+      """
+      2 passed
+      """
+    When I run cucumber.js with `--part 3/3 -f pretty`
+    Then the output contains the text:
+      """
+      feature3
+      """
+    And the output contains the text:
+      """
+      1 passed
+      """
+    And the exit status should be 0
+
   Scenario: display Cucumber version
     When I run cucumber.js with `--version`
     Then I see the version of Cucumber
