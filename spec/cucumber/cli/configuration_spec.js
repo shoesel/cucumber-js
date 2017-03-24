@@ -112,6 +112,50 @@ describe("Cucumber.Cli.Configuration", function () {
         spyOn(fs, 'createWriteStream').and.returnValue(stream);
       });
 
+      describe("getAstFilter()", function () {
+        var astFilter, scenarioAtLineRule, anyOfNamesRule, partRules;
+
+        beforeEach(function () {
+          astFilter      = createSpyWithStubs("AST filter");
+          scenarioAtLineRule = createSpy("scenario at line rule");
+          anyOfNamesRule = createSpy("any of names rule");
+          partRules      = createSpy("part specs");
+          spyOn(Cucumber.TagGroupParser, 'getTagGroupsFromStrings').and.returnValue([]);
+          spyOn(Cucumber.Ast, 'Filter').and.returnValue(astFilter);
+          spyOn(Cucumber.Ast.Filter, 'ScenarioAtLineRule').and.returnValue(scenarioAtLineRule);
+          spyOn(Cucumber.Ast.Filter, 'AnyOfNamesRule').and.returnValue(anyOfNamesRule);
+          spyOn(Cucumber.Ast.Filter, 'ModularPartitioningRule').and.returnValue(partRules);
+        });
+
+        it("gets the tag filter rules", function () {
+          configuration.getAstFilter();
+          expect(Cucumber.TagGroupParser.getTagGroupsFromStrings).toHaveBeenCalled();
+        });
+
+        it("instantiates an AST filter", function () {
+          configuration.getAstFilter();
+          expect(Cucumber.Ast.Filter).toHaveBeenCalledWith([scenarioAtLineRule, anyOfNamesRule].concat(partRules));
+        });
+
+        it("returns the AST filter", function () {
+          expect(configuration.getAstFilter()).toBe(astFilter);
+        });
+      });
+
+      describe("getSupportCodeLibrary()", function () {
+        var supportCodeFilePaths, supportCodeLoader, supportCodeLibrary, argumentParser;
+
+        beforeEach(function () {
+          supportCodeFilePaths = createSpy("support code file paths");
+          supportCodeLoader    = createSpy("support code loader");
+          supportCodeLibrary   = createSpy("support code library");
+          argumentParser       = createSpy("argument parser");
+          spyOnStub(argumentParser, 'getSupportCodeFilePaths').and.returnValue(supportCodeFilePaths);
+          spyOn(Cucumber.Cli, 'SupportCodeLoader').and.returnValue(supportCodeLoader);
+          spyOnStub(supportCodeLoader, 'getSupportCodeLibrary').and.returnValue(supportCodeLibrary);
+        });
+      });
+
       describe("when the output file does not include a colon", function() {
         beforeEach(function () {
           options.format = ['json:path/to/file'];

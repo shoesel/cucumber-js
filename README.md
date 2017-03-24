@@ -58,3 +58,7 @@ $ npm install cucumber
   * [Attachments](/docs/support_files/attachments.md)
   * [Event Handlers](/docs/support_files/event_handlers.md)
   * [API Reference](/docs/support_files/api_reference.md)
+
+## Fork notes
+
+* Can use partitioning to parallelize tests
